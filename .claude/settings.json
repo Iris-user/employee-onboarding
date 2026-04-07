@@ -1,0 +1,38 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git:*)",
+      "Bash(mvn:*)",
+      "Bash(gradle:*)",
+      "Bash(java:*)",
+      "Bash(javac:*)",
+      "Bash(docker:*)",
+      "Bash(curl:*)",
+      "Read(**)",
+      "Write(**)",
+      "Edit(**)",
+      "Bash(./mvnw test:*)",
+      "Bash(\"/c/Program Files/JetBrains/IntelliJ IDEA 2026.1/plugins/maven/lib/maven3/bin/mvn\" test)",
+      "Bash(\"/c/Program Files/JetBrains/IntelliJ IDEA 2026.1/plugins/maven/lib/maven3/bin/mvn\" dependency:tree)",
+      "Bash(jar tf:*)",
+      "Bash(find /c/Users/subod/.m2/repository/org/springframework/boot/spring-boot-test-autoconfigure/4.0.5 -name \"*.jar\" ! -name \"*sources*\" -exec unzip -l {} \\\\;)",
+      "Bash(unzip -l /c/Users/subod/.m2/repository/org/springframework/boot/spring-boot-test-autoconfigure/4.0.5/spring-boot-test-autoconfigure-4.0.5.jar)",
+      "Bash(unzip -l /c/Users/subod/.m2/repository/org/springframework/boot/spring-boot-test/4.0.5/spring-boot-test-4.0.5.jar)",
+      "Bash(unzip -l /c/Users/subod/.m2/repository/org/springframework/spring-test/7.0.6/spring-test-7.0.6.jar)",
+      "Bash(cat /c/Users/subod/IdeaProjects/employee-onboarding/.sonar*)",
+      "Bash(\"/c/Program Files/JetBrains/IntelliJ IDEA 2026.1/plugins/maven/lib/maven3/bin/mvn\" sonar:sonar -Dsonar.host.url=http://localhost:9000 -Dsonar.token=squ_5d002d95e337ee41bc1cc37ea64d092678339087)",
+      "Bash(\"/c/Program Files/JetBrains/IntelliJ IDEA 2026.1/plugins/maven/lib/maven3/bin/mvn\" sonar:sonar -Dsonar.host.url=http://localhost:9000 -Dsonar.login=squ_5d002d95e337ee41bc1cc37ea64d092678339087)",
+      "mcp__sonar__issues",
+      "mcp__github__get_me",
+      "mcp__github__list_branches",
+      "Bash(claude mcp:*)"
+    ],
+    "deny": [
+      "Bash(python:*)",
+      "Bash(python3:*)",
+      "Bash(pip:*)",
+      "Bash(rm -rf:*)",
+      "Bash(sudo:*)"
+    ]
+  }
+}
