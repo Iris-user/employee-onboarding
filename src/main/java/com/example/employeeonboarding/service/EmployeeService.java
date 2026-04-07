@@ -5,6 +5,7 @@ import com.example.employeeonboarding.repository.EmployeeRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class EmployeeService {
@@ -21,5 +22,15 @@ public class EmployeeService {
 
     public List<Employee> getAll() {
         return repository.findAll();
+    }
+
+    public Optional<Employee> update(Long id, Employee updatedData) {
+        return repository.findById(id).map(existing -> {
+            existing.setFirstName(updatedData.getFirstName());
+            existing.setLastName(updatedData.getLastName());
+            existing.setEmail(updatedData.getEmail());
+            existing.setDepartment(updatedData.getDepartment());
+            return repository.save(existing);
+        });
     }
 }
