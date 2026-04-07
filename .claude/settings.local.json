@@ -16,7 +16,16 @@
       "mcp__github__get_me",
       "mcp__github__list_branches",
       "mcp__github__create_pull_request",
-      "Bash(claude mcp:*)"
+      "Bash(claude mcp:*)",
+      "Bash(echo \"Exit: $?\")",
+      "Bash(mkdir -p /c/Users/subod/IdeaProjects/employee-onboarding/src/test/java/com/example/employeeonboarding/controller)",
+      "Bash(mkdir -p /c/Users/subod/IdeaProjects/employee-onboarding/src/test/java/com/example/employeeonboarding/service)",
+      "Bash(\"/c/Program Files/JetBrains/IntelliJ IDEA 2026.1/plugins/maven/lib/maven3/bin/mvn\" test -f /c/Users/subod/IdeaProjects/employee-onboarding/pom.xml)",
+      "Bash('/c/Program Files/JetBrains/IntelliJ IDEA 2026.1/plugins/maven/lib/maven3/bin/mvn' test -f /c/Users/subod/IdeaProjects/employee-onboarding/pom.xml)",
+      "Bash(/c/Java/bin/jar.exe tf:*)",
+      "Bash('/c/Program Files/JetBrains/IntelliJ IDEA 2026.1/plugins/maven/lib/maven3/bin/mvn' sonar:sonar -Dsonar.host.url=http://localhost:9000 -Dsonar.token=squ_5d002d95e337ee41bc1cc37ea64d092678339087 -f /c/Users/subod/IdeaProjects/employee-onboarding/pom.xml)",
+      "Bash('/c/Program Files/JetBrains/IntelliJ IDEA 2026.1/plugins/maven/lib/maven3/bin/mvn' sonar:sonar -Dsonar.host.url=http://localhost:9000 -Dsonar.login=squ_5d002d95e337ee41bc1cc37ea64d092678339087 -f /c/Users/subod/IdeaProjects/employee-onboarding/pom.xml)",
+      "mcp__sonar__quality_gate_status"
     ]
   }
 }
