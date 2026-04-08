@@ -22,4 +22,14 @@ public class EmployeeService {
     public List<Employee> getAll() {
         return repository.findAll();
     }
+
+    public Employee update(Long id, Employee updates) {
+        Employee existing = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Employee not found with id: " + id));
+        existing.setName(updates.getName());
+        existing.setLastName(updates.getLastName());
+        existing.setEmail(updates.getEmail());
+        existing.setDepartment(updates.getDepartment());
+        return repository.save(existing);
+    }
 }
