@@ -12,7 +12,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -52,7 +51,7 @@ class EmployeeControllerTest {
     @Test
     void shouldUpdateLastName() throws Exception {
         Employee updated = new Employee(1L, "John", "Smith", "john.doe@example.com", "Engineering");
-        when(service.updateLastName(eq(1L), eq("Smith"))).thenReturn(updated);
+        when(service.updateLastName(1L, "Smith")).thenReturn(updated);
 
         mockMvc.perform(patch("/employees/1/last-name")
                         .contentType(MediaType.APPLICATION_JSON)
