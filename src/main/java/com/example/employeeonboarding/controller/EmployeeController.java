@@ -5,6 +5,7 @@ import com.example.employeeonboarding.service.EmployeeService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/employees")
@@ -24,5 +25,10 @@ public class EmployeeController {
     @GetMapping
     public List<Employee> getAllEmployees() {
         return service.getAll();
+    }
+
+    @PatchMapping("/{id}/last-name")
+    public Employee updateLastName(@PathVariable Long id, @RequestBody Map<String, String> body) {
+        return service.updateLastName(id, body.get("lastName"));
     }
 }
