@@ -25,4 +25,9 @@ public class EmployeeController {
     public List<Employee> getAllEmployees() {
         return service.getAll();
     }
+
+    @PutMapping("/{id}")
+    public Employee updateEmployee(@PathVariable Long id, @RequestBody Employee emp) {
+        return service.update(id, emp);
+    }
 }
