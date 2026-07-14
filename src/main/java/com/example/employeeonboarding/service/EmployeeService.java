@@ -22,4 +22,8 @@ public class EmployeeService {
     public List<Employee> getAll() {
         return repository.findAll();
     }
+
+    public List<Employee> getByDepartment(String department) {
+        return repository.findByDepartment(department);
+    }
 }
