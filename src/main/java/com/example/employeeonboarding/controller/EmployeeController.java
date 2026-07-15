@@ -2,6 +2,7 @@ package com.example.employeeonboarding.controller;
 
 import com.example.employeeonboarding.model.Employee;
 import com.example.employeeonboarding.service.EmployeeService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,5 +25,11 @@ public class EmployeeController {
     @GetMapping
     public List<Employee> getAllEmployees() {
         return service.getAll();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Employee> updateEmployee(@PathVariable Long id, @RequestBody Employee emp) {
+        Employee updated = service.update(id, emp);
+        return updated != null ? ResponseEntity.ok(updated) : ResponseEntity.notFound().build();
     }
 }

@@ -22,4 +22,15 @@ public class EmployeeService {
     public List<Employee> getAll() {
         return repository.findAll();
     }
+
+    public Employee update(Long id, Employee changes) {
+        return repository.findById(id)
+                .map(existing -> {
+                    existing.setName(changes.getName());
+                    existing.setEmail(changes.getEmail());
+                    existing.setDepartment(changes.getDepartment());
+                    return repository.save(existing);
+                })
+                .orElse(null);
+    }
 }
