@@ -9,7 +9,11 @@ import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.List;
+
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -24,6 +28,30 @@ class EmployeeControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Test
+    void createEmployee_returnsCreatedEmployee() throws Exception {
+        Employee toCreate = new Employee(null, "Alice Smith", "alice.smith@example.com", "Sales");
+        Employee created = new Employee(1L, "Alice Smith", "alice.smith@example.com", "Sales");
+        when(service.save(toCreate)).thenReturn(created);
+
+        mockMvc.perform(post("/employees")
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(toCreate)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$.name").value("Alice Smith"));
+    }
+
+    @Test
+    void getAllEmployees_returnsListOfEmployees() throws Exception {
+        Employee employee = new Employee(1L, "Alice Smith", "alice.smith@example.com", "Sales");
+        when(service.getAll()).thenReturn(List.of(employee));
+
+        mockMvc.perform(get("/employees"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].name").value("Alice Smith"));
+    }
 
     @Test
     void updateEmployee_returnsUpdatedEmployeeWhenIdExists() throws Exception {

@@ -8,6 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -23,6 +24,27 @@ class EmployeeServiceTest {
 
     @InjectMocks
     private EmployeeService service;
+
+    @Test
+    void save_delegatesToRepositoryAndReturnsSavedEmployee() {
+        Employee toSave = new Employee(null, "Alice", "alice@example.com", "Engineering");
+        Employee saved = new Employee(1L, "Alice", "alice@example.com", "Engineering");
+        when(repository.save(toSave)).thenReturn(saved);
+
+        Employee result = service.save(toSave);
+
+        assertThat(result).isEqualTo(saved);
+    }
+
+    @Test
+    void getAll_returnsAllEmployeesFromRepository() {
+        Employee employee = new Employee(1L, "Alice", "alice@example.com", "Engineering");
+        when(repository.findAll()).thenReturn(List.of(employee));
+
+        List<Employee> result = service.getAll();
+
+        assertThat(result).containsExactly(employee);
+    }
 
     @Test
     void update_updatesAndReturnsEmployeeWhenIdExists() {
