@@ -38,4 +38,10 @@ public class EmployeeController {
     public Employee updateLastName(@PathVariable Long id, @RequestBody Map<String, String> body) {
         return service.updateLastName(id, body.get("lastName"));
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Employee> updateEmployee(@PathVariable Long id, @RequestBody Employee emp) {
+        Employee updated = service.update(id, emp);
+        return updated != null ? ResponseEntity.ok(updated) : ResponseEntity.notFound().build();
+    }
 }

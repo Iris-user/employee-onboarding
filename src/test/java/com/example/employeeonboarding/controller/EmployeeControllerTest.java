@@ -2,6 +2,7 @@ package com.example.employeeonboarding.controller;
 
 import com.example.employeeonboarding.model.Employee;
 import com.example.employeeonboarding.service.EmployeeService;
+import tools.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -24,6 +25,9 @@ class EmployeeControllerTest {
 
     @MockitoBean
     private EmployeeService service;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Test
     void shouldCreateEmployeeWithLastName() throws Exception {
@@ -67,7 +71,6 @@ class EmployeeControllerTest {
                 .andExpect(status().isNotFound());
     }
 
-    @Test
     void shouldUpdateLastName() throws Exception {
         Employee updated = new Employee(1L, "John", "Smith", "john.doe@example.com", "Engineering");
         when(service.updateLastName(1L, "Smith")).thenReturn(updated);
@@ -77,5 +80,30 @@ class EmployeeControllerTest {
                         .content("{\"lastName\":\"Smith\"}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.lastName").value("Smith"));
+    }
+
+    @Test
+    void updateEmployee_returnsUpdatedEmployeeWhenIdExists() throws Exception {
+        Employee changes = new Employee(null, "Alice", "Smith", "alice.smith@example.com", "Sales");
+        Employee updated = new Employee(1L, "Alice", "Smith", "alice.smith@example.com", "Sales");
+        when(service.update(1L, changes)).thenReturn(updated);
+
+        mockMvc.perform(put("/employees/{id}", 1L)
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(changes)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Alice"))
+                .andExpect(jsonPath("$.department").value("Sales"));
+    }
+
+    @Test
+    void updateEmployee_returns404WhenIdDoesNotExist() throws Exception {
+        Employee changes = new Employee(null, "Alice", "Smith", "alice.smith@example.com", "Sales");
+        when(service.update(99L, changes)).thenReturn(null);
+
+        mockMvc.perform(put("/employees/{id}", 99L)
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(changes)))
+                .andExpect(status().isNotFound());
     }
 }

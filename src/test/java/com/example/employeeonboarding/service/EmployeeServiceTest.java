@@ -70,7 +70,6 @@ class EmployeeServiceTest {
         assertThat(result).isNull();
     }
 
-    @Test
     void shouldUpdateLastName() {
         when(repository.findById(1L)).thenReturn(Optional.of(employee));
         when(repository.save(any(Employee.class))).thenAnswer(inv -> inv.getArgument(0));
@@ -87,5 +86,29 @@ class EmployeeServiceTest {
         when(repository.findById(99L)).thenReturn(Optional.empty());
 
         assertThrows(RuntimeException.class, () -> service.updateLastName(99L, "Smith"));
+    }
+
+    @Test
+    void update_updatesAndReturnsEmployeeWhenIdExists() {
+        Employee existing = new Employee(1L, "Alice", "Smith", "alice@example.com", "Engineering");
+        Employee changes = new Employee(null, "Alice", "Smith", "alice.smith@example.com", "Sales");
+        Employee saved = new Employee(1L, "Alice", "Smith", "alice.smith@example.com", "Sales");
+        when(repository.findById(1L)).thenReturn(Optional.of(existing));
+        when(repository.save(existing)).thenReturn(saved);
+
+        Employee result = service.update(1L, changes);
+
+        assertThat(result).isEqualTo(saved);
+    }
+
+    @Test
+    void update_returnsNullWhenIdDoesNotExist() {
+        Employee changes = new Employee(null, "Alice", "Smith", "alice.smith@example.com", "Sales");
+        when(repository.findById(99L)).thenReturn(Optional.empty());
+
+        Employee result = service.update(99L, changes);
+
+        assertThat(result).isNull();
+        verify(repository, never()).save(org.mockito.ArgumentMatchers.any());
     }
 }

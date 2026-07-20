@@ -28,6 +28,11 @@ Returns a list of all employees.
 
 Returns an employee's details by ID. Returns `404 Not Found` if the ID doesn't exist.
 
+### Update Employee
+`PUT /employees/{id}`
+
+Updates an existing employee's `name`, `email`, and `department`. Returns `404 Not Found` if the ID doesn't exist.
+
 ### Update Employee Last Name
 `PATCH /employees/{id}/last-name`
 
