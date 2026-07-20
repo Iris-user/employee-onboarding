@@ -26,6 +26,10 @@ public class EmployeeService {
         return repository.findAll();
     }
 
+    public Employee getById(Long id) {
+        return repository.findById(id).orElse(null);
+    }
+
     public Employee update(Long id, Employee updatedEmployee) {
         Employee existingEmployee = repository.findById(id)
                 .orElseThrow(() -> new EmployeeNotFoundException("Employee not found with id: " + id));

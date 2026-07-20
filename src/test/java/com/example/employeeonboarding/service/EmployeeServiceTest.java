@@ -6,10 +6,10 @@ import com.example.employeeonboarding.model.Employee;
 import com.example.employeeonboarding.repository.EmployeeRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -44,6 +44,34 @@ class EmployeeServiceTest {
 
         assertThat(result.getLastName()).isEqualTo("Smith");
         verify(repository).save(toSave);
+    }
+
+    @Test
+    void getAll_returnsAllEmployeesFromRepository() {
+        Employee employee = new Employee(1L, "Alice", "Smith", "alice@example.com", "Engineering");
+        when(repository.findAll()).thenReturn(List.of(employee));
+
+        List<Employee> result = service.getAll();
+
+        assertThat(result).containsExactly(employee);
+    }
+
+    @Test
+    void getById_returnsEmployeeWhenIdExists() {
+        when(repository.findById(1L)).thenReturn(Optional.of(existingEmployee));
+
+        Employee result = service.getById(1L);
+
+        assertThat(result).isEqualTo(existingEmployee);
+    }
+
+    @Test
+    void getById_returnsNullWhenIdDoesNotExist() {
+        when(repository.findById(99L)).thenReturn(Optional.empty());
+
+        Employee result = service.getById(99L);
+
+        assertThat(result).isNull();
     }
 
     @Test
