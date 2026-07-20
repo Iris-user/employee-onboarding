@@ -22,4 +22,8 @@ public class EmployeeService {
     public List<Employee> getAll() {
         return repository.findAll();
     }
+
+    public Employee getById(Long id) {
+        return repository.findById(id).orElse(null);
+    }
 }
