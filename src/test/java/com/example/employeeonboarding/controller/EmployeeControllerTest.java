@@ -87,6 +87,17 @@ class EmployeeControllerTest {
     }
 
     @Test
+    void updateLastName_returnsNotFound_whenEmployeeDoesNotExist() throws Exception {
+        when(service.updateLastName(99L, "Smith"))
+                .thenThrow(new EmployeeNotFoundException("Employee not found with id: 99"));
+
+        mockMvc.perform(patch("/employees/99/last-name")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"lastName\":\"Smith\"}"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     void getEmployeesByDepartment_returnsFilteredList() throws Exception {
         Employee emp = new Employee(1L, "Alice", "Smith", "alice.smith@example.com", "Engineering");
         when(service.getByDepartment("Engineering")).thenReturn(List.of(emp));

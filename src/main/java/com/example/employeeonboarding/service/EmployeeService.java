@@ -32,7 +32,7 @@ public class EmployeeService {
 
     public Employee updateLastName(Long id, String lastName) {
         Employee employee = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Employee not found with id: " + id));
+                .orElseThrow(() -> new EmployeeNotFoundException("Employee not found with id: " + id));
         employee.setLastName(lastName);
         return repository.save(employee);
     }

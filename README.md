@@ -41,7 +41,7 @@ Updates an existing employee's `name`, `email`, and `department`. Returns `404 N
 ### Update Employee Last Name
 `PATCH /employees/{id}/last-name`
 
-Updates the last name of an existing employee.
+Updates the last name of an existing employee. Returns `404 Not Found` if the ID doesn't exist.
 
 **Request Body:**
 ```json

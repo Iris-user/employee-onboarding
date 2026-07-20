@@ -15,7 +15,6 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -85,10 +84,11 @@ class EmployeeServiceTest {
     }
 
     @Test
-    void shouldThrowExceptionWhenEmployeeNotFoundForUpdate() {
+    void shouldThrowEmployeeNotFoundExceptionWhenEmployeeNotFoundForUpdateLastName() {
         when(repository.findById(99L)).thenReturn(Optional.empty());
 
-        assertThrows(RuntimeException.class, () -> service.updateLastName(99L, "Smith"));
+        assertThatThrownBy(() -> service.updateLastName(99L, "Smith"))
+                .isInstanceOf(EmployeeNotFoundException.class);
     }
 
     @Test
