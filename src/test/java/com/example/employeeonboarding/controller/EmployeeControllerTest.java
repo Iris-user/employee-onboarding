@@ -54,6 +54,25 @@ class EmployeeControllerTest {
     }
 
     @Test
+    void getEmployeeById_returnsEmployeeWhenIdExists() throws Exception {
+        Employee employee = new Employee(1L, "Alice Smith", "alice.smith@example.com", "Sales");
+        when(service.getById(1L)).thenReturn(employee);
+
+        mockMvc.perform(get("/employees/{id}", 1L))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$.name").value("Alice Smith"));
+    }
+
+    @Test
+    void getEmployeeById_returns404WhenIdDoesNotExist() throws Exception {
+        when(service.getById(99L)).thenReturn(null);
+
+        mockMvc.perform(get("/employees/{id}", 99L))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     void updateEmployee_returnsUpdatedEmployeeWhenIdExists() throws Exception {
         Employee changes = new Employee(null, "Alice Smith", "alice.smith@example.com", "Sales");
         Employee updated = new Employee(1L, "Alice Smith", "alice.smith@example.com", "Sales");

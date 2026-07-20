@@ -23,6 +23,10 @@ public class EmployeeService {
         return repository.findAll();
     }
 
+    public Employee getById(Long id) {
+        return repository.findById(id).orElse(null);
+    }
+
     public Employee update(Long id, Employee changes) {
         return repository.findById(id)
                 .map(existing -> {

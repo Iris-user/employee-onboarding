@@ -27,6 +27,12 @@ public class EmployeeController {
         return service.getAll();
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Employee> getEmployeeById(@PathVariable Long id) {
+        Employee employee = service.getById(id);
+        return employee != null ? ResponseEntity.ok(employee) : ResponseEntity.notFound().build();
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<Employee> updateEmployee(@PathVariable Long id, @RequestBody Employee emp) {
         Employee updated = service.update(id, emp);
