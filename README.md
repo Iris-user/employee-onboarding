@@ -1,18 +1,78 @@
 # employee-onboarding
 Spring Boot Employee Onboarding API
 
-## API
+## API Endpoints
 
-| Method | Path             | Description                                                                 |
-|--------|------------------|------------------------------------------------------------------------------|
-| POST   | `/employees`     | Create an employee (`name`, `lastName`, `email`, `department`)               |
-| GET    | `/employees`     | List all employees                                                          |
-| GET    | `/employees/{id}`| Return an employee's details by ID. Unknown `id` returns `404 Not Found`.   |
-| GET    | `/employees/department/{department}` | List employees filtered by department                          |
-| PUT    | `/employees/{id}`| Update an employee's `name`, `email`, `department`. Attempting to change `lastName` returns `400 Bad Request`. Unknown `id` returns `404 Not Found`. |
+### Create Employee
+`POST /employees`
+
+Creates a new employee. Supports `name`, `lastName`, `email`, and `department` fields.
+
+**Request Body:**
+```json
+{
+  "name": "John",
+  "lastName": "Doe",
+  "email": "john.doe@example.com",
+  "department": "Engineering"
+}
+```
+
+### Get All Employees
+`GET /employees`
+
+Returns a list of all employees.
+
+### Get Employee By ID
+`GET /employees/{id}`
+
+Returns an employee's details by ID. Returns `404 Not Found` if the ID doesn't exist.
+
+### Get Employees By Department
+`GET /employees/department/{department}`
+
+Returns a list of employees filtered by department.
+
+### Update Employee
+`PUT /employees/{id}`
+
+Updates an existing employee's `name`, `email`, and `department`. Returns `404 Not Found` if the ID doesn't exist.
+
+### Update Employee Last Name
+`PATCH /employees/{id}/last-name`
+
+Updates the last name of an existing employee.
+
+**Request Body:**
+```json
+{
+  "lastName": "Smith"
+}
+```
 
 ## API Documentation
 
 Swagger UI: `http://localhost:8080/swagger-ui/index.html`
 
 OpenAPI spec: `http://localhost:8080/v3/api-docs`
+
+## Tech Stack
+- Java 21
+- Spring Boot 4.0.5
+- Spring Data JPA
+- H2 (in-memory database)
+- Lombok
+- JUnit 5 + Mockito (testing)
+
+## Build & Run
+
+```bash
+mvn clean install
+mvn spring-boot:run
+```
+
+## Test
+
+```bash
+mvn test
+```

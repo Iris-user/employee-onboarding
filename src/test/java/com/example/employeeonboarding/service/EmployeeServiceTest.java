@@ -4,6 +4,7 @@ import com.example.employeeonboarding.exception.EmployeeNotFoundException;
 import com.example.employeeonboarding.exception.LastNameUpdateNotAllowedException;
 import com.example.employeeonboarding.model.Employee;
 import com.example.employeeonboarding.repository.EmployeeRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -14,9 +15,9 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class EmployeeServiceTest {
@@ -26,29 +27,26 @@ class EmployeeServiceTest {
 
     private EmployeeService service;
 
-    private Employee existingEmployee;
+    private Employee employee;
 
-    @org.junit.jupiter.api.BeforeEach
+    @BeforeEach
     void setUp() {
         service = new EmployeeService(repository);
-        existingEmployee = new Employee(1L, "John", "Doe", "john.doe@example.com", "Engineering");
+        employee = new Employee(1L, "John", "Doe", "john.doe@example.com", "Engineering");
     }
 
     @Test
-    void save_persistsLastNameAlongWithOtherAttributes() {
-        Employee toSave = new Employee(null, "Jane", "Smith", "jane.smith@example.com", "HR");
-        Employee saved = new Employee(2L, "Jane", "Smith", "jane.smith@example.com", "HR");
-        when(repository.save(toSave)).thenReturn(saved);
+    void shouldSaveEmployeeWithLastName() {
+        when(repository.save(any(Employee.class))).thenReturn(employee);
 
-        Employee result = service.save(toSave);
+        Employee saved = service.save(employee);
 
-        assertThat(result.getLastName()).isEqualTo("Smith");
-        verify(repository).save(toSave);
+        assertThat(saved.getLastName()).isEqualTo("Doe");
+        verify(repository, times(1)).save(employee);
     }
 
     @Test
     void getAll_returnsAllEmployeesFromRepository() {
-        Employee employee = new Employee(1L, "Alice", "Smith", "alice@example.com", "Engineering");
         when(repository.findAll()).thenReturn(List.of(employee));
 
         List<Employee> result = service.getAll();
@@ -58,11 +56,11 @@ class EmployeeServiceTest {
 
     @Test
     void getById_returnsEmployeeWhenIdExists() {
-        when(repository.findById(1L)).thenReturn(Optional.of(existingEmployee));
+        when(repository.findById(1L)).thenReturn(Optional.of(employee));
 
         Employee result = service.getById(1L);
 
-        assertThat(result).isEqualTo(existingEmployee);
+        assertThat(result).isEqualTo(employee);
     }
 
     @Test
@@ -72,6 +70,25 @@ class EmployeeServiceTest {
         Employee result = service.getById(99L);
 
         assertThat(result).isNull();
+    }
+
+    @Test
+    void shouldUpdateLastName() {
+        when(repository.findById(1L)).thenReturn(Optional.of(employee));
+        when(repository.save(any(Employee.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        Employee updated = service.updateLastName(1L, "Smith");
+
+        assertThat(updated.getLastName()).isEqualTo("Smith");
+        verify(repository).findById(1L);
+        verify(repository).save(employee);
+    }
+
+    @Test
+    void shouldThrowExceptionWhenEmployeeNotFoundForUpdate() {
+        when(repository.findById(99L)).thenReturn(Optional.empty());
+
+        assertThrows(RuntimeException.class, () -> service.updateLastName(99L, "Smith"));
     }
 
     @Test
@@ -95,7 +112,7 @@ class EmployeeServiceTest {
 
     @Test
     void update_appliesChangesToNameEmailAndDepartment_whenLastNameUnchanged() {
-        when(repository.findById(1L)).thenReturn(Optional.of(existingEmployee));
+        when(repository.findById(1L)).thenReturn(Optional.of(employee));
         when(repository.save(any(Employee.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Employee update = new Employee(null, "Johnny", "Doe", "johnny.doe@example.com", "Sales");
@@ -110,7 +127,7 @@ class EmployeeServiceTest {
 
     @Test
     void update_leavesLastNameUnchanged_whenRequestOmitsLastName() {
-        when(repository.findById(1L)).thenReturn(Optional.of(existingEmployee));
+        when(repository.findById(1L)).thenReturn(Optional.of(employee));
         when(repository.save(any(Employee.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Employee update = new Employee(null, "Johnny", null, "johnny.doe@example.com", "Sales");
@@ -122,14 +139,14 @@ class EmployeeServiceTest {
 
     @Test
     void update_throwsLastNameUpdateNotAllowedException_whenLastNameIsChanged() {
-        when(repository.findById(1L)).thenReturn(Optional.of(existingEmployee));
+        when(repository.findById(1L)).thenReturn(Optional.of(employee));
 
         Employee update = new Employee(null, "John", "Doeson", "john.doe@example.com", "Engineering");
 
         assertThatThrownBy(() -> service.update(1L, update))
                 .isInstanceOf(LastNameUpdateNotAllowedException.class);
 
-        verify(repository, org.mockito.Mockito.never()).save(any(Employee.class));
+        verify(repository, never()).save(any(Employee.class));
     }
 
     @Test

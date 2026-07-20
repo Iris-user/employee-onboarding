@@ -30,6 +30,13 @@ public class EmployeeService {
         return repository.findById(id).orElse(null);
     }
 
+    public Employee updateLastName(Long id, String lastName) {
+        Employee employee = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Employee not found with id: " + id));
+        employee.setLastName(lastName);
+        return repository.save(employee);
+    }
+
     public List<Employee> getByDepartment(String department) {
         return repository.findByDepartment(department);
     }

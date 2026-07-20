@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/employees")
@@ -31,6 +32,11 @@ public class EmployeeController {
     public ResponseEntity<Employee> getEmployeeById(@PathVariable Long id) {
         Employee employee = service.getById(id);
         return employee != null ? ResponseEntity.ok(employee) : ResponseEntity.notFound().build();
+    }
+
+    @PatchMapping("/{id}/last-name")
+    public Employee updateLastName(@PathVariable Long id, @RequestBody Map<String, String> body) {
+        return service.updateLastName(id, body.get("lastName"));
     }
 
     @GetMapping("/department/{department}")
