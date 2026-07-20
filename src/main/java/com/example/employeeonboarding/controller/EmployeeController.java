@@ -37,4 +37,10 @@ public class EmployeeController {
     public List<Employee> getEmployeesByDepartment(@PathVariable String department) {
         return service.getByDepartment(department);
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Employee> updateEmployee(@PathVariable Long id, @RequestBody Employee emp) {
+        Employee updated = service.update(id, emp);
+        return updated != null ? ResponseEntity.ok(updated) : ResponseEntity.notFound().build();
+    }
 }

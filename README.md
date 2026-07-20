@@ -6,3 +6,4 @@ Spring Boot Employee Onboarding API
 - `GET /employees` — list all employees
 - `GET /employees/{id}` — return an employee's details by ID (returns 404 if not found)
 - `GET /employees/department/{department}` — list employees filtered by department
+- `PUT /employees/{id}` — update an existing employee's details by ID (returns 404 if not found)

@@ -29,7 +29,7 @@
 ## Git Configuration
 - Remote: https://github.com/Iris-user/employee-onboarding.git
 - Repo owner: Iris-user
-- Contributor with write access: subodhmalik
+- Contributor with write access: astha-jain-mcp
 - Git credential helper: Windows Credential Manager (credentials pre-stored)
 - Always push via `git push` — never embed tokens in remote URLs
 - Never push directly to main
