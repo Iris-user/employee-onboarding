@@ -14,6 +14,7 @@ import java.util.List;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(EmployeeController.class)
@@ -68,6 +69,31 @@ class EmployeeControllerTest {
         when(service.getById(99L)).thenReturn(null);
 
         mockMvc.perform(get("/employees/{id}", 99L))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void updateEmployee_returnsUpdatedEmployeeWhenIdExists() throws Exception {
+        Employee changes = new Employee(null, "Alice Smith", "alice.smith@example.com", "Sales");
+        Employee updated = new Employee(1L, "Alice Smith", "alice.smith@example.com", "Sales");
+        when(service.update(1L, changes)).thenReturn(updated);
+
+        mockMvc.perform(put("/employees/{id}", 1L)
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(changes)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Alice Smith"))
+                .andExpect(jsonPath("$.department").value("Sales"));
+    }
+
+    @Test
+    void updateEmployee_returns404WhenIdDoesNotExist() throws Exception {
+        Employee changes = new Employee(null, "Alice Smith", "alice.smith@example.com", "Sales");
+        when(service.update(99L, changes)).thenReturn(null);
+
+        mockMvc.perform(put("/employees/{id}", 99L)
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(changes)))
                 .andExpect(status().isNotFound());
     }
 }
