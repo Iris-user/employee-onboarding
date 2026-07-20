@@ -17,9 +17,9 @@ class EmployeeRepositoryTest {
 
     @Test
     void findByDepartment_returnsOnlyEmployeesInThatDepartment() {
-        repository.save(new Employee(null, "Alice", "alice@example.com", "Engineering"));
-        repository.save(new Employee(null, "Bob", "bob@example.com", "Sales"));
-        repository.save(new Employee(null, "Carol", "carol@example.com", "Engineering"));
+        repository.save(new Employee(null, "Alice", "Smith", "alice@example.com", "Engineering"));
+        repository.save(new Employee(null, "Bob", "Jones", "bob@example.com", "Sales"));
+        repository.save(new Employee(null, "Carol", "White", "carol@example.com", "Engineering"));
 
         List<Employee> result = repository.findByDepartment("Engineering");
 
@@ -28,7 +28,7 @@ class EmployeeRepositoryTest {
 
     @Test
     void findByDepartment_returnsEmptyListWhenNoEmployeesMatch() {
-        repository.save(new Employee(null, "Alice", "alice@example.com", "Engineering"));
+        repository.save(new Employee(null, "Alice", "Smith", "alice@example.com", "Engineering"));
 
         List<Employee> result = repository.findByDepartment("Marketing");
 
