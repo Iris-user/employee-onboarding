@@ -9,6 +9,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -41,6 +42,25 @@ class EmployeeServiceTest {
         Employee result = service.save(emp);
 
         assertThat(result).isEqualTo(saved);
+    }
+
+    @Test
+    void getById_returnsEmployeeWhenIdExists() {
+        Employee employee = new Employee(1L, "Alice", "alice@example.com", "Engineering");
+        when(repository.findById(1L)).thenReturn(Optional.of(employee));
+
+        Employee result = service.getById(1L);
+
+        assertThat(result).isEqualTo(employee);
+    }
+
+    @Test
+    void getById_returnsNullWhenIdDoesNotExist() {
+        when(repository.findById(99L)).thenReturn(Optional.empty());
+
+        Employee result = service.getById(99L);
+
+        assertThat(result).isNull();
     }
 
     @Test

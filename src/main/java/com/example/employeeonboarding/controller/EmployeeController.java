@@ -2,6 +2,7 @@ package com.example.employeeonboarding.controller;
 
 import com.example.employeeonboarding.model.Employee;
 import com.example.employeeonboarding.service.EmployeeService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,6 +25,12 @@ public class EmployeeController {
     @GetMapping
     public List<Employee> getAllEmployees() {
         return service.getAll();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Employee> getEmployeeById(@PathVariable Long id) {
+        Employee employee = service.getById(id);
+        return employee != null ? ResponseEntity.ok(employee) : ResponseEntity.notFound().build();
     }
 
     @GetMapping("/department/{department}")

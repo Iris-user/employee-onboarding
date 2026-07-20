@@ -23,6 +23,10 @@ public class EmployeeService {
         return repository.findAll();
     }
 
+    public Employee getById(Long id) {
+        return repository.findById(id).orElse(null);
+    }
+
     public List<Employee> getByDepartment(String department) {
         return repository.findByDepartment(department);
     }
