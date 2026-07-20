@@ -77,4 +77,20 @@ class EmployeeIntegrationTest {
     void shouldThrowWhenUpdatingLastNameForNonExistentEmployee() {
         assertThrows(RuntimeException.class, () -> employeeService.updateLastName(9999L, "Nobody"));
     }
+
+    @Test
+    void shouldDeleteEmployeeViaEndpoint() throws Exception {
+        Employee saved = employeeService.save(new Employee(null, "Eve", "Black", "eve@example.com", "Support"));
+
+        mockMvc.perform(delete("/employees/" + saved.getId()))
+                .andExpect(status().isNoContent());
+
+        assertThat(employeeRepository.findById(saved.getId())).isEmpty();
+    }
+
+    @Test
+    void shouldReturnNotFoundWhenDeletingNonExistentEmployee() throws Exception {
+        mockMvc.perform(delete("/employees/9999"))
+                .andExpect(status().isNotFound());
+    }
 }

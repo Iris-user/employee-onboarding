@@ -12,6 +12,8 @@ import java.util.Objects;
 @Service
 public class EmployeeService {
 
+    private static final String EMPLOYEE_NOT_FOUND_MESSAGE = "Employee not found with id: ";
+
     private final EmployeeRepository repository;
 
     public EmployeeService(EmployeeRepository repository) {
@@ -32,7 +34,7 @@ public class EmployeeService {
 
     public Employee updateLastName(Long id, String lastName) {
         Employee employee = repository.findById(id)
-                .orElseThrow(() -> new EmployeeNotFoundException("Employee not found with id: " + id));
+                .orElseThrow(() -> new EmployeeNotFoundException(EMPLOYEE_NOT_FOUND_MESSAGE + id));
         employee.setLastName(lastName);
         return repository.save(employee);
     }
@@ -43,7 +45,7 @@ public class EmployeeService {
 
     public Employee update(Long id, Employee updatedEmployee) {
         Employee existingEmployee = repository.findById(id)
-                .orElseThrow(() -> new EmployeeNotFoundException("Employee not found with id: " + id));
+                .orElseThrow(() -> new EmployeeNotFoundException(EMPLOYEE_NOT_FOUND_MESSAGE + id));
 
         if (updatedEmployee.getLastName() != null
                 && !Objects.equals(updatedEmployee.getLastName(), existingEmployee.getLastName())) {
@@ -55,5 +57,12 @@ public class EmployeeService {
         existingEmployee.setDepartment(updatedEmployee.getDepartment());
 
         return repository.save(existingEmployee);
+    }
+
+    public void deleteById(Long id) {
+        if (!repository.existsById(id)) {
+            throw new EmployeeNotFoundException(EMPLOYEE_NOT_FOUND_MESSAGE + id);
+        }
+        repository.deleteById(id);
     }
 }
