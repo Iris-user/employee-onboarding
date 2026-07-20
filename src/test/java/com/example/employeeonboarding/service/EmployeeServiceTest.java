@@ -9,6 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -40,6 +41,33 @@ class EmployeeServiceTest {
 
         assertThat(saved.getLastName()).isEqualTo("Doe");
         verify(repository, times(1)).save(employee);
+    }
+
+    @Test
+    void getAll_returnsAllEmployeesFromRepository() {
+        when(repository.findAll()).thenReturn(List.of(employee));
+
+        List<Employee> result = service.getAll();
+
+        assertThat(result).containsExactly(employee);
+    }
+
+    @Test
+    void getById_returnsEmployeeWhenIdExists() {
+        when(repository.findById(1L)).thenReturn(Optional.of(employee));
+
+        Employee result = service.getById(1L);
+
+        assertThat(result).isEqualTo(employee);
+    }
+
+    @Test
+    void getById_returnsNullWhenIdDoesNotExist() {
+        when(repository.findById(99L)).thenReturn(Optional.empty());
+
+        Employee result = service.getById(99L);
+
+        assertThat(result).isNull();
     }
 
     @Test

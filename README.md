@@ -23,6 +23,11 @@ Creates a new employee. Supports `name`, `lastName`, `email`, and `department` f
 
 Returns a list of all employees.
 
+### Get Employee By ID
+`GET /employees/{id}`
+
+Returns an employee's details by ID. Returns `404 Not Found` if the ID doesn't exist.
+
 ### Update Employee Last Name
 `PATCH /employees/{id}/last-name`
 
