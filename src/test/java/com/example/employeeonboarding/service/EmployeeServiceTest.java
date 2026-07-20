@@ -75,6 +75,25 @@ class EmployeeServiceTest {
     }
 
     @Test
+    void getByDepartment_returnsOnlyMatchingEmployees() {
+        Employee engineer = new Employee(1L, "Alice", "Smith", "alice@example.com", "Engineering");
+        when(repository.findByDepartment("Engineering")).thenReturn(List.of(engineer));
+
+        List<Employee> result = service.getByDepartment("Engineering");
+
+        assertThat(result).containsExactly(engineer);
+    }
+
+    @Test
+    void getByDepartment_returnsEmptyListWhenNoMatch() {
+        when(repository.findByDepartment("Marketing")).thenReturn(List.of());
+
+        List<Employee> result = service.getByDepartment("Marketing");
+
+        assertThat(result).isEmpty();
+    }
+
+    @Test
     void update_appliesChangesToNameEmailAndDepartment_whenLastNameUnchanged() {
         when(repository.findById(1L)).thenReturn(Optional.of(existingEmployee));
         when(repository.save(any(Employee.class))).thenAnswer(invocation -> invocation.getArgument(0));

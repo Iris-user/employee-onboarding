@@ -33,6 +33,11 @@ public class EmployeeController {
         return employee != null ? ResponseEntity.ok(employee) : ResponseEntity.notFound().build();
     }
 
+    @GetMapping("/department/{department}")
+    public List<Employee> getEmployeesByDepartment(@PathVariable String department) {
+        return service.getByDepartment(department);
+    }
+
     @PutMapping("/{id}")
     public Employee updateEmployee(@PathVariable Long id, @RequestBody Employee emp) {
         return service.update(id, emp);
