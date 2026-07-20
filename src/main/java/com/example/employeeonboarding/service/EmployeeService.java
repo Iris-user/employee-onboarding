@@ -1,10 +1,13 @@
 package com.example.employeeonboarding.service;
 
+import com.example.employeeonboarding.exception.EmployeeNotFoundException;
+import com.example.employeeonboarding.exception.LastNameUpdateNotAllowedException;
 import com.example.employeeonboarding.model.Employee;
 import com.example.employeeonboarding.repository.EmployeeRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class EmployeeService {
@@ -34,14 +37,23 @@ public class EmployeeService {
         return repository.save(employee);
     }
 
-    public Employee update(Long id, Employee changes) {
-        return repository.findById(id)
-                .map(existing -> {
-                    existing.setName(changes.getName());
-                    existing.setEmail(changes.getEmail());
-                    existing.setDepartment(changes.getDepartment());
-                    return repository.save(existing);
-                })
-                .orElse(null);
+    public List<Employee> getByDepartment(String department) {
+        return repository.findByDepartment(department);
+    }
+
+    public Employee update(Long id, Employee updatedEmployee) {
+        Employee existingEmployee = repository.findById(id)
+                .orElseThrow(() -> new EmployeeNotFoundException("Employee not found with id: " + id));
+
+        if (updatedEmployee.getLastName() != null
+                && !Objects.equals(updatedEmployee.getLastName(), existingEmployee.getLastName())) {
+            throw new LastNameUpdateNotAllowedException("Last name cannot be updated");
+        }
+
+        existingEmployee.setName(updatedEmployee.getName());
+        existingEmployee.setEmail(updatedEmployee.getEmail());
+        existingEmployee.setDepartment(updatedEmployee.getDepartment());
+
+        return repository.save(existingEmployee);
     }
 }

@@ -1,5 +1,7 @@
 package com.example.employeeonboarding.controller;
 
+import com.example.employeeonboarding.exception.EmployeeNotFoundException;
+import com.example.employeeonboarding.exception.LastNameUpdateNotAllowedException;
 import com.example.employeeonboarding.model.Employee;
 import com.example.employeeonboarding.service.EmployeeService;
 import tools.jackson.databind.ObjectMapper;
@@ -13,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -71,6 +74,7 @@ class EmployeeControllerTest {
                 .andExpect(status().isNotFound());
     }
 
+    @Test
     void shouldUpdateLastName() throws Exception {
         Employee updated = new Employee(1L, "John", "Smith", "john.doe@example.com", "Engineering");
         when(service.updateLastName(1L, "Smith")).thenReturn(updated);
@@ -83,27 +87,60 @@ class EmployeeControllerTest {
     }
 
     @Test
-    void updateEmployee_returnsUpdatedEmployeeWhenIdExists() throws Exception {
-        Employee changes = new Employee(null, "Alice", "Smith", "alice.smith@example.com", "Sales");
-        Employee updated = new Employee(1L, "Alice", "Smith", "alice.smith@example.com", "Sales");
-        when(service.update(1L, changes)).thenReturn(updated);
+    void getEmployeesByDepartment_returnsFilteredList() throws Exception {
+        Employee emp = new Employee(1L, "Alice", "Smith", "alice.smith@example.com", "Engineering");
+        when(service.getByDepartment("Engineering")).thenReturn(List.of(emp));
 
-        mockMvc.perform(put("/employees/{id}", 1L)
-                        .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(changes)))
+        mockMvc.perform(get("/employees/department/{department}", "Engineering"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("Alice"))
-                .andExpect(jsonPath("$.department").value("Sales"));
+                .andExpect(jsonPath("$[0].name").value("Alice"))
+                .andExpect(jsonPath("$[0].department").value("Engineering"));
     }
 
     @Test
-    void updateEmployee_returns404WhenIdDoesNotExist() throws Exception {
-        Employee changes = new Employee(null, "Alice", "Smith", "alice.smith@example.com", "Sales");
-        when(service.update(99L, changes)).thenReturn(null);
+    void getEmployeesByDepartment_returnsEmptyArrayWhenNoMatch() throws Exception {
+        when(service.getByDepartment("Marketing")).thenReturn(List.of());
 
-        mockMvc.perform(put("/employees/{id}", 99L)
+        mockMvc.perform(get("/employees/department/{department}", "Marketing"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$").isEmpty());
+    }
+
+    @Test
+    void updateEmployee_returnsOk_whenLastNameUnchanged() throws Exception {
+        Employee updated = new Employee(1L, "Johnny", "Doe", "johnny.doe@example.com", "Sales");
+        when(service.update(eq(1L), any(Employee.class))).thenReturn(updated);
+
+        mockMvc.perform(put("/employees/1")
                         .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(changes)))
+                        .content(objectMapper.writeValueAsString(updated)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Johnny"))
+                .andExpect(jsonPath("$.lastName").value("Doe"));
+    }
+
+    @Test
+    void updateEmployee_returnsBadRequest_whenLastNameChanged() throws Exception {
+        Employee attempted = new Employee(1L, "John", "Doeson", "john.doe@example.com", "Engineering");
+        when(service.update(eq(1L), any(Employee.class)))
+                .thenThrow(new LastNameUpdateNotAllowedException("Last name cannot be updated"));
+
+        mockMvc.perform(put("/employees/1")
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(attempted)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void updateEmployee_returnsNotFound_whenEmployeeDoesNotExist() throws Exception {
+        Employee attempted = new Employee(99L, "Ghost", "Employee", "ghost@example.com", "Ops");
+        when(service.update(eq(99L), any(Employee.class)))
+                .thenThrow(new EmployeeNotFoundException("Employee not found"));
+
+        mockMvc.perform(put("/employees/99")
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(attempted)))
                 .andExpect(status().isNotFound());
     }
 }

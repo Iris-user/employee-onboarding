@@ -28,6 +28,11 @@ Returns a list of all employees.
 
 Returns an employee's details by ID. Returns `404 Not Found` if the ID doesn't exist.
 
+### Get Employees By Department
+`GET /employees/department/{department}`
+
+Returns a list of employees filtered by department.
+
 ### Update Employee
 `PUT /employees/{id}`
 
@@ -44,6 +49,12 @@ Updates the last name of an existing employee.
   "lastName": "Smith"
 }
 ```
+
+## API Documentation
+
+Swagger UI: `http://localhost:8080/swagger-ui/index.html`
+
+OpenAPI spec: `http://localhost:8080/v3/api-docs`
 
 ## Tech Stack
 - Java 21
