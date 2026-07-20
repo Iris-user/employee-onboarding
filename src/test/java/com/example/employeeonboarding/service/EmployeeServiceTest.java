@@ -158,4 +158,23 @@ class EmployeeServiceTest {
         assertThatThrownBy(() -> service.update(99L, update))
                 .isInstanceOf(EmployeeNotFoundException.class);
     }
+
+    @Test
+    void deleteById_deletesEmployee_whenIdExists() {
+        when(repository.existsById(1L)).thenReturn(true);
+
+        service.deleteById(1L);
+
+        verify(repository).deleteById(1L);
+    }
+
+    @Test
+    void deleteById_throwsEmployeeNotFoundException_whenIdDoesNotExist() {
+        when(repository.existsById(99L)).thenReturn(false);
+
+        assertThatThrownBy(() -> service.deleteById(99L))
+                .isInstanceOf(EmployeeNotFoundException.class);
+
+        verify(repository, never()).deleteById(any());
+    }
 }

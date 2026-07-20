@@ -50,6 +50,11 @@ Updates the last name of an existing employee. Returns `404 Not Found` if the ID
 }
 ```
 
+### Delete Employee
+`DELETE /employees/{id}`
+
+Deletes an employee by ID. Returns `204 No Content` on success, or `404 Not Found` if the ID doesn't exist.
+
 ## API Documentation
 
 Swagger UI: `http://localhost:8080/swagger-ui/index.html`

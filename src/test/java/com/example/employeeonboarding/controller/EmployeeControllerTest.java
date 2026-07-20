@@ -154,4 +154,19 @@ class EmployeeControllerTest {
                         .content(objectMapper.writeValueAsString(attempted)))
                 .andExpect(status().isNotFound());
     }
+
+    @Test
+    void deleteEmployee_returnsNoContent_whenIdExists() throws Exception {
+        mockMvc.perform(delete("/employees/{id}", 1L))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void deleteEmployee_returnsNotFound_whenIdDoesNotExist() throws Exception {
+        org.mockito.Mockito.doThrow(new EmployeeNotFoundException("Employee not found with id: 99"))
+                .when(service).deleteById(99L);
+
+        mockMvc.perform(delete("/employees/{id}", 99L))
+                .andExpect(status().isNotFound());
+    }
 }
