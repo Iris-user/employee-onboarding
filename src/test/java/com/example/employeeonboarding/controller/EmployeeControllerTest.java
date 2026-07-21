@@ -140,6 +140,27 @@ class EmployeeControllerTest {
     }
 
     @Test
+    void getEmployeesByEmail_returnsFilteredList() throws Exception {
+        Employee emp = new Employee(1L, "Alice", "Smith", "alice.smith@example.com", "Engineering", 30);
+        when(service.getByEmail("alice.smith@example.com")).thenReturn(List.of(emp));
+
+        mockMvc.perform(get("/employees/email/{email}", "alice.smith@example.com"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].name").value("Alice"))
+                .andExpect(jsonPath("$[0].email").value("alice.smith@example.com"));
+    }
+
+    @Test
+    void getEmployeesByEmail_returnsEmptyArrayWhenNoMatch() throws Exception {
+        when(service.getByEmail("nobody@example.com")).thenReturn(List.of());
+
+        mockMvc.perform(get("/employees/email/{email}", "nobody@example.com"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$").isEmpty());
+    }
+
+    @Test
     void updateEmployee_returnsOk_whenLastNameUnchanged() throws Exception {
         Employee updated = new Employee(1L, "Johnny", "Doe", "johnny.doe@example.com", "Sales", 30);
         when(service.update(eq(1L), any(Employee.class))).thenReturn(updated);

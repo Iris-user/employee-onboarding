@@ -47,6 +47,10 @@ public class EmployeeService {
         return repository.findByAge(age);
     }
 
+    public List<Employee> getByEmail(String email) {
+        return repository.findByEmail(email);
+    }
+
     public Employee update(Long id, Employee updatedEmployee) {
         Employee existingEmployee = repository.findById(id)
                 .orElseThrow(() -> new EmployeeNotFoundException(EMPLOYEE_NOT_FOUND_MESSAGE + id));
