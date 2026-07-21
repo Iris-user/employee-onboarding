@@ -31,7 +31,7 @@ class EmployeeServiceTest {
     @BeforeEach
     void setUp() {
         service = new EmployeeService(repository);
-        employee = new Employee(1L, "John", "Doe", "john.doe@example.com", "Engineering");
+        employee = new Employee(1L, "John", "Doe", "john.doe@example.com", "Engineering", 30);
     }
 
     @Test
@@ -93,7 +93,7 @@ class EmployeeServiceTest {
 
     @Test
     void getByDepartment_returnsOnlyMatchingEmployees() {
-        Employee engineer = new Employee(1L, "Alice", "Smith", "alice@example.com", "Engineering");
+        Employee engineer = new Employee(1L, "Alice", "Smith", "alice@example.com", "Engineering", 27);
         when(repository.findByDepartment("Engineering")).thenReturn(List.of(engineer));
 
         List<Employee> result = service.getByDepartment("Engineering");
@@ -111,11 +111,30 @@ class EmployeeServiceTest {
     }
 
     @Test
+    void getByAge_returnsOnlyMatchingEmployees() {
+        Employee thirtyYearOld = new Employee(1L, "Alice", "Smith", "alice@example.com", "Engineering", 30);
+        when(repository.findByAge(30)).thenReturn(List.of(thirtyYearOld));
+
+        List<Employee> result = service.getByAge(30);
+
+        assertThat(result).containsExactly(thirtyYearOld);
+    }
+
+    @Test
+    void getByAge_returnsEmptyListWhenNoMatch() {
+        when(repository.findByAge(99)).thenReturn(List.of());
+
+        List<Employee> result = service.getByAge(99);
+
+        assertThat(result).isEmpty();
+    }
+
+    @Test
     void update_appliesChangesToNameEmailAndDepartment_whenLastNameUnchanged() {
         when(repository.findById(1L)).thenReturn(Optional.of(employee));
         when(repository.save(any(Employee.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        Employee update = new Employee(null, "Johnny", "Doe", "johnny.doe@example.com", "Sales");
+        Employee update = new Employee(null, "Johnny", "Doe", "johnny.doe@example.com", "Sales", 30);
 
         Employee result = service.update(1L, update);
 
@@ -130,7 +149,7 @@ class EmployeeServiceTest {
         when(repository.findById(1L)).thenReturn(Optional.of(employee));
         when(repository.save(any(Employee.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        Employee update = new Employee(null, "Johnny", null, "johnny.doe@example.com", "Sales");
+        Employee update = new Employee(null, "Johnny", null, "johnny.doe@example.com", "Sales", 30);
 
         Employee result = service.update(1L, update);
 
@@ -141,7 +160,7 @@ class EmployeeServiceTest {
     void update_throwsLastNameUpdateNotAllowedException_whenLastNameIsChanged() {
         when(repository.findById(1L)).thenReturn(Optional.of(employee));
 
-        Employee update = new Employee(null, "John", "Doeson", "john.doe@example.com", "Engineering");
+        Employee update = new Employee(null, "John", "Doeson", "john.doe@example.com", "Engineering", 30);
 
         assertThatThrownBy(() -> service.update(1L, update))
                 .isInstanceOf(LastNameUpdateNotAllowedException.class);
@@ -153,7 +172,7 @@ class EmployeeServiceTest {
     void update_throwsEmployeeNotFoundException_whenEmployeeDoesNotExist() {
         when(repository.findById(99L)).thenReturn(Optional.empty());
 
-        Employee update = new Employee(null, "Ghost", "Employee", "ghost@example.com", "Ops");
+        Employee update = new Employee(null, "Ghost", "Employee", "ghost@example.com", "Ops", 40);
 
         assertThatThrownBy(() -> service.update(99L, update))
                 .isInstanceOf(EmployeeNotFoundException.class);

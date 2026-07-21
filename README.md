@@ -6,7 +6,7 @@ Spring Boot Employee Onboarding API
 ### Create Employee
 `POST /employees`
 
-Creates a new employee. Supports `name`, `lastName`, `email`, and `department` fields.
+Creates a new employee. Supports `name`, `lastName`, `email`, `department`, and `age` fields.
 
 **Request Body:**
 ```json
@@ -14,7 +14,8 @@ Creates a new employee. Supports `name`, `lastName`, `email`, and `department` f
   "name": "John",
   "lastName": "Doe",
   "email": "john.doe@example.com",
-  "department": "Engineering"
+  "department": "Engineering",
+  "age": 30
 }
 ```
 
@@ -32,6 +33,11 @@ Returns an employee's details by ID. Returns `404 Not Found` if the ID doesn't e
 `GET /employees/department/{department}`
 
 Returns a list of employees filtered by department.
+
+### Get Employees By Age
+`GET /employees/age/{age}`
+
+Returns a list of employees filtered by age. Returns an empty list if no employees match.
 
 ### Update Employee
 `PUT /employees/{id}`
