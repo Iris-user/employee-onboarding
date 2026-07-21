@@ -54,4 +54,23 @@ class EmployeeRepositoryTest {
 
         assertThat(result).isEmpty();
     }
+
+    @Test
+    void findByEmail_returnsOnlyEmployeesWithThatEmail() {
+        repository.save(new Employee(null, "Alice", "Smith", "alice@example.com", "Engineering", 30));
+        repository.save(new Employee(null, "Bob", "Jones", "bob@example.com", "Sales", 40));
+
+        List<Employee> result = repository.findByEmail("alice@example.com");
+
+        assertThat(result).extracting(Employee::getName).containsExactly("Alice");
+    }
+
+    @Test
+    void findByEmail_returnsEmptyListWhenNoEmployeesMatch() {
+        repository.save(new Employee(null, "Alice", "Smith", "alice@example.com", "Engineering", 30));
+
+        List<Employee> result = repository.findByEmail("nobody@example.com");
+
+        assertThat(result).isEmpty();
+    }
 }

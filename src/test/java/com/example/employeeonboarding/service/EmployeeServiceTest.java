@@ -130,6 +130,25 @@ class EmployeeServiceTest {
     }
 
     @Test
+    void getByEmail_returnsOnlyMatchingEmployees() {
+        Employee alice = new Employee(1L, "Alice", "Smith", "alice@example.com", "Engineering", 30);
+        when(repository.findByEmail("alice@example.com")).thenReturn(List.of(alice));
+
+        List<Employee> result = service.getByEmail("alice@example.com");
+
+        assertThat(result).containsExactly(alice);
+    }
+
+    @Test
+    void getByEmail_returnsEmptyListWhenNoMatch() {
+        when(repository.findByEmail("nobody@example.com")).thenReturn(List.of());
+
+        List<Employee> result = service.getByEmail("nobody@example.com");
+
+        assertThat(result).isEmpty();
+    }
+
+    @Test
     void update_appliesChangesToNameEmailAndDepartment_whenLastNameUnchanged() {
         when(repository.findById(1L)).thenReturn(Optional.of(employee));
         when(repository.save(any(Employee.class))).thenAnswer(invocation -> invocation.getArgument(0));
