@@ -45,6 +45,11 @@ public class EmployeeController {
         return service.getByDepartment(department);
     }
 
+    @GetMapping("/age/{age}")
+    public List<Employee> getEmployeesByAge(@PathVariable Integer age) {
+        return service.getByAge(age);
+    }
+
     @PutMapping("/{id}")
     public Employee updateEmployee(@PathVariable Long id, @RequestBody Employee emp) {
         return service.update(id, emp);

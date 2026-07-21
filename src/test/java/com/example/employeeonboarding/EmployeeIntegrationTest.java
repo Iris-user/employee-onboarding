@@ -46,7 +46,7 @@ class EmployeeIntegrationTest {
 
     @Test
     void shouldGetAllEmployees() throws Exception {
-        employeeService.save(new Employee(null, "Bob", "Brown", "bob@example.com", "Finance"));
+        employeeService.save(new Employee(null, "Bob", "Brown", "bob@example.com", "Finance", 30));
 
         mockMvc.perform(get("/employees"))
                 .andExpect(status().isOk())
@@ -55,7 +55,7 @@ class EmployeeIntegrationTest {
 
     @Test
     void shouldUpdateLastNameViaEndpoint() throws Exception {
-        Employee saved = employeeService.save(new Employee(null, "Carol", "White", "carol@example.com", "IT"));
+        Employee saved = employeeService.save(new Employee(null, "Carol", "White", "carol@example.com", "IT", 30));
 
         mockMvc.perform(patch("/employees/" + saved.getId() + "/last-name")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -66,7 +66,7 @@ class EmployeeIntegrationTest {
 
     @Test
     void shouldUpdateLastNameViaService() {
-        Employee saved = employeeService.save(new Employee(null, "Dan", "Green", "dan@example.com", "Legal"));
+        Employee saved = employeeService.save(new Employee(null, "Dan", "Green", "dan@example.com", "Legal", 30));
 
         Employee updated = employeeService.updateLastName(saved.getId(), "Grey");
 
@@ -80,7 +80,7 @@ class EmployeeIntegrationTest {
 
     @Test
     void shouldDeleteEmployeeViaEndpoint() throws Exception {
-        Employee saved = employeeService.save(new Employee(null, "Eve", "Black", "eve@example.com", "Support"));
+        Employee saved = employeeService.save(new Employee(null, "Eve", "Black", "eve@example.com", "Support", 30));
 
         mockMvc.perform(delete("/employees/" + saved.getId()))
                 .andExpect(status().isNoContent());
