@@ -39,6 +39,11 @@ Returns a list of employees filtered by department.
 
 Returns a list of employees filtered by age. Returns an empty list if no employees match.
 
+### Get Employees By Email
+`GET /employees/email/{email}`
+
+Returns a list of employees filtered by email address. Returns an empty list if no employees match.
+
 ### Update Employee
 `PUT /employees/{id}`
 
