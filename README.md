@@ -70,7 +70,7 @@ Deletes an employee by ID. Returns `204 No Content` on success, or `404 Not Foun
 
 Swagger UI: `http://localhost:8080/swagger-ui/index.html`
 
-OpenAPI spec: `http://localhost:8080/v3/api-docs`
+OpenAPI spec: `http://localhost:8080/v3/api-docs` (title: "Employee Onboarding API", version: "1.0")
 
 ## Tech Stack
 - Java 21
