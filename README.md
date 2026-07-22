@@ -6,7 +6,7 @@ Spring Boot Employee Onboarding API
 ### Create Employee
 `POST /employees`
 
-Creates a new employee. Supports `name`, `lastName`, `email`, `department`, and `age` fields.
+Creates a new employee. Requires all fields: `name`, `lastName`, `email`, `department`, and `age`. Returns `400 Bad Request` if any field is missing or blank.
 
 **Request Body:**
 ```json
