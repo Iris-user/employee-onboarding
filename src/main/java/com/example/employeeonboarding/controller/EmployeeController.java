@@ -66,4 +66,10 @@ public class EmployeeController {
     public void deleteEmployee(@PathVariable Long id) {
         service.deleteById(id);
     }
+
+    @DeleteMapping
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteEmployees(@RequestBody Map<String, List<Long>> body) {
+        service.deleteByIds(body.get("ids"));
+    }
 }

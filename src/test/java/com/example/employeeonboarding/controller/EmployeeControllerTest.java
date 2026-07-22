@@ -223,4 +223,25 @@ class EmployeeControllerTest {
         mockMvc.perform(delete("/employees/{id}", 99L))
                 .andExpect(status().isNotFound());
     }
+
+    @Test
+    void deleteEmployees_returnsNoContent_whenAllIdsExist() throws Exception {
+        mockMvc.perform(delete("/employees")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"ids\":[1,2]}"))
+                .andExpect(status().isNoContent());
+
+        verify(service).deleteByIds(List.of(1L, 2L));
+    }
+
+    @Test
+    void deleteEmployees_returnsNotFound_whenAnyIdDoesNotExist() throws Exception {
+        org.mockito.Mockito.doThrow(new EmployeeNotFoundException("Employee(s) not found with id(s): [99]"))
+                .when(service).deleteByIds(List.of(1L, 99L));
+
+        mockMvc.perform(delete("/employees")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"ids\":[1,99]}"))
+                .andExpect(status().isNotFound());
+    }
 }

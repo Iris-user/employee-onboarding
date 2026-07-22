@@ -73,4 +73,12 @@ public class EmployeeService {
         }
         repository.deleteById(id);
     }
+
+    public void deleteByIds(List<Long> ids) {
+        List<Long> missingIds = ids.stream().filter(id -> !repository.existsById(id)).toList();
+        if (!missingIds.isEmpty()) {
+            throw new EmployeeNotFoundException("Employee(s) not found with id(s): " + missingIds);
+        }
+        repository.deleteAllById(ids);
+    }
 }
