@@ -66,6 +66,17 @@ Updates the last name of an existing employee. Returns `404 Not Found` if the ID
 
 Deletes an employee by ID. Returns `204 No Content` on success, or `404 Not Found` if the ID doesn't exist.
 
+### Delete Multiple Employees
+`DELETE /employees`
+
+Deletes employees for a list of IDs passed in the request body. Returns `204 No Content` if all IDs exist and are deleted, or `404 Not Found` if any ID doesn't exist (no employees are deleted in that case).
+
+```json
+{
+  "ids": [1, 2, 3]
+}
+```
+
 ## API Documentation
 
 Swagger UI: `http://localhost:8080/swagger-ui/index.html`

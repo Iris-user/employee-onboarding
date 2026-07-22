@@ -215,4 +215,25 @@ class EmployeeServiceTest {
 
         verify(repository, never()).deleteById(any());
     }
+
+    @Test
+    void deleteByIds_deletesAllEmployees_whenAllIdsExist() {
+        when(repository.existsById(1L)).thenReturn(true);
+        when(repository.existsById(2L)).thenReturn(true);
+
+        service.deleteByIds(List.of(1L, 2L));
+
+        verify(repository).deleteAllById(List.of(1L, 2L));
+    }
+
+    @Test
+    void deleteByIds_throwsEmployeeNotFoundException_whenAnyIdDoesNotExist() {
+        when(repository.existsById(1L)).thenReturn(true);
+        when(repository.existsById(99L)).thenReturn(false);
+
+        assertThatThrownBy(() -> service.deleteByIds(List.of(1L, 99L)))
+                .isInstanceOf(EmployeeNotFoundException.class);
+
+        verify(repository, never()).deleteAllById(any());
+    }
 }

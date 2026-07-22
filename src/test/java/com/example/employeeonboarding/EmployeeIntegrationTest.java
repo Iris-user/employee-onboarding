@@ -103,4 +103,30 @@ class EmployeeIntegrationTest {
         mockMvc.perform(delete("/employees/9999"))
                 .andExpect(status().isNotFound());
     }
+
+    @Test
+    void shouldDeleteMultipleEmployeesViaEndpoint() throws Exception {
+        Employee first = employeeService.save(new Employee(null, "Frank", "Miller", "frank@example.com", "Sales", 40));
+        Employee second = employeeService.save(new Employee(null, "Grace", "Hopper", "grace@example.com", "Engineering", 45));
+
+        mockMvc.perform(delete("/employees")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"ids\":[" + first.getId() + "," + second.getId() + "]}"))
+                .andExpect(status().isNoContent());
+
+        assertThat(employeeRepository.findById(first.getId())).isEmpty();
+        assertThat(employeeRepository.findById(second.getId())).isEmpty();
+    }
+
+    @Test
+    void shouldReturnNotFoundWhenDeletingMultipleEmployeesWithUnknownId() throws Exception {
+        Employee saved = employeeService.save(new Employee(null, "Henry", "Ford", "henry@example.com", "Engineering", 50));
+
+        mockMvc.perform(delete("/employees")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"ids\":[" + saved.getId() + ",9999]}"))
+                .andExpect(status().isNotFound());
+
+        assertThat(employeeRepository.findById(saved.getId())).isPresent();
+    }
 }
