@@ -2,6 +2,7 @@ package com.example.employeeonboarding.controller;
 
 import com.example.employeeonboarding.model.Employee;
 import com.example.employeeonboarding.service.EmployeeService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +21,7 @@ public class EmployeeController {
     }
 
     @PostMapping
-    public Employee createEmployee(@RequestBody Employee emp) {
+    public Employee createEmployee(@Valid @RequestBody Employee emp) {
         return service.save(emp);
     }
 

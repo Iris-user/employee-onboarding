@@ -38,10 +38,20 @@ class EmployeeIntegrationTest {
     void shouldCreateAndRetrieveEmployeeWithLastName() throws Exception {
         mockMvc.perform(post("/employees")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"Alice\",\"lastName\":\"Johnson\",\"email\":\"alice@example.com\",\"department\":\"HR\"}"))
+                        .content("{\"name\":\"Alice\",\"lastName\":\"Johnson\",\"email\":\"alice@example.com\",\"department\":\"HR\",\"age\":28}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Alice"))
                 .andExpect(jsonPath("$.lastName").value("Johnson"));
+    }
+
+    @Test
+    void shouldReturnBadRequestWhenCreatingEmployeeWithMissingFields() throws Exception {
+        mockMvc.perform(post("/employees")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\":\"Alice\",\"lastName\":\"Johnson\"}"))
+                .andExpect(status().isBadRequest());
+
+        assertThat(employeeRepository.findAll()).isEmpty();
     }
 
     @Test

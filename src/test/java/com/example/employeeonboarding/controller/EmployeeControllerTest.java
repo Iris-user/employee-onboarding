@@ -16,6 +16,8 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -39,10 +41,20 @@ class EmployeeControllerTest {
 
         mockMvc.perform(post("/employees")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"John\",\"lastName\":\"Doe\",\"email\":\"john.doe@example.com\",\"department\":\"Engineering\"}"))
+                        .content("{\"name\":\"John\",\"lastName\":\"Doe\",\"email\":\"john.doe@example.com\",\"department\":\"Engineering\",\"age\":30}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.lastName").value("Doe"))
                 .andExpect(jsonPath("$.name").value("John"));
+    }
+
+    @Test
+    void createEmployee_returnsBadRequest_whenRequiredFieldsMissing() throws Exception {
+        mockMvc.perform(post("/employees")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\":\"John\",\"lastName\":\"Doe\"}"))
+                .andExpect(status().isBadRequest());
+
+        verify(service, never()).save(any(Employee.class));
     }
 
     @Test
