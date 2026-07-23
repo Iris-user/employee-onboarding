@@ -42,6 +42,11 @@ public class EmployeeController {
         return Collections.singletonMap("temporaryAddress", service.getTemporaryAddress(id));
     }
 
+    @GetMapping("/{id}/permanent-address")
+    public Map<String, String> getPermanentAddress(@PathVariable Long id) {
+        return Collections.singletonMap("permanentAddress", service.getPermanentAddress(id));
+    }
+
     @PatchMapping("/{id}/last-name")
     public Employee updateLastName(@PathVariable Long id, @RequestBody Map<String, String> body) {
         return service.updateLastName(id, body.get("lastName"));
