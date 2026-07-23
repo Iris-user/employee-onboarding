@@ -33,4 +33,6 @@ public class Employee {
     private Integer age;
 
     private String temporaryAddress;
+
+    private String permanentAddress;
 }

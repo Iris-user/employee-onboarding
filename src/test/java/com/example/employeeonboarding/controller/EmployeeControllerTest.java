@@ -41,7 +41,7 @@ class EmployeeControllerTest {
 
     @Test
     void shouldCreateEmployeeWithLastName() throws Exception {
-        Employee emp = new Employee(1L, "John", "Doe", "john.doe@example.com", ENGINEERING, 30, null);
+        Employee emp = new Employee(1L, "John", "Doe", "john.doe@example.com", ENGINEERING, 30, null, null);
         when(service.save(any(Employee.class))).thenReturn(emp);
 
         mockMvc.perform(post("/employees")
@@ -64,7 +64,7 @@ class EmployeeControllerTest {
 
     @Test
     void shouldGetAllEmployees() throws Exception {
-        Employee emp = new Employee(1L, "John", "Doe", "john.doe@example.com", ENGINEERING, 30, null);
+        Employee emp = new Employee(1L, "John", "Doe", "john.doe@example.com", ENGINEERING, 30, null, null);
         when(service.getAll()).thenReturn(List.of(emp));
 
         mockMvc.perform(get("/employees"))
@@ -74,7 +74,7 @@ class EmployeeControllerTest {
 
     @Test
     void getEmployeeById_returnsEmployeeWhenIdExists() throws Exception {
-        Employee employee = new Employee(1L, "John", "Doe", "john.doe@example.com", ENGINEERING, 30, null);
+        Employee employee = new Employee(1L, "John", "Doe", "john.doe@example.com", ENGINEERING, 30, null, null);
         when(service.getById(1L)).thenReturn(employee);
 
         mockMvc.perform(get("/employees/{id}", 1L))
@@ -93,7 +93,7 @@ class EmployeeControllerTest {
 
     @Test
     void shouldUpdateLastName() throws Exception {
-        Employee updated = new Employee(1L, "John", "Smith", "john.doe@example.com", ENGINEERING, 30, null);
+        Employee updated = new Employee(1L, "John", "Smith", "john.doe@example.com", ENGINEERING, 30, null, null);
         when(service.updateLastName(1L, "Smith")).thenReturn(updated);
 
         mockMvc.perform(patch("/employees/1/last-name")
@@ -116,7 +116,7 @@ class EmployeeControllerTest {
 
     @Test
     void getEmployeesByDepartment_returnsFilteredList() throws Exception {
-        Employee emp = new Employee(1L, "Alice", "Smith", "alice.smith@example.com", ENGINEERING, 27, null);
+        Employee emp = new Employee(1L, "Alice", "Smith", "alice.smith@example.com", ENGINEERING, 27, null, null);
         when(service.getByDepartment("Engineering")).thenReturn(List.of(emp));
 
         mockMvc.perform(get("/employees/department/{department}", "Engineering"))
@@ -137,7 +137,7 @@ class EmployeeControllerTest {
 
     @Test
     void getEmployeesByAge_returnsFilteredList() throws Exception {
-        Employee emp = new Employee(1L, "Alice", "Smith", "alice.smith@example.com", ENGINEERING, 30, null);
+        Employee emp = new Employee(1L, "Alice", "Smith", "alice.smith@example.com", ENGINEERING, 30, null, null);
         when(service.getByAge(30)).thenReturn(List.of(emp));
 
         mockMvc.perform(get("/employees/age/{age}", 30))
@@ -158,7 +158,7 @@ class EmployeeControllerTest {
 
     @Test
     void getEmployeesByEmail_returnsFilteredList() throws Exception {
-        Employee emp = new Employee(1L, "Alice", "Smith", "alice.smith@example.com", ENGINEERING, 30, null);
+        Employee emp = new Employee(1L, "Alice", "Smith", "alice.smith@example.com", ENGINEERING, 30, null, null);
         when(service.getByEmail("alice.smith@example.com")).thenReturn(List.of(emp));
 
         mockMvc.perform(get("/employees/email/{email}", "alice.smith@example.com"))
@@ -179,7 +179,7 @@ class EmployeeControllerTest {
 
     @Test
     void updateEmployee_returnsOk_whenLastNameUnchanged() throws Exception {
-        Employee updated = new Employee(1L, "Johnny", "Doe", "johnny.doe@example.com", SALES, 30, null);
+        Employee updated = new Employee(1L, "Johnny", "Doe", "johnny.doe@example.com", SALES, 30, null, null);
         when(service.update(eq(1L), any(Employee.class))).thenReturn(updated);
 
         mockMvc.perform(put("/employees/1")
@@ -192,7 +192,7 @@ class EmployeeControllerTest {
 
     @Test
     void updateEmployee_returnsBadRequest_whenLastNameChanged() throws Exception {
-        Employee attempted = new Employee(1L, "John", "Doeson", "john.doe@example.com", ENGINEERING, 30, null);
+        Employee attempted = new Employee(1L, "John", "Doeson", "john.doe@example.com", ENGINEERING, 30, null, null);
         when(service.update(eq(1L), any(Employee.class)))
                 .thenThrow(new LastNameUpdateNotAllowedException("Last name cannot be updated"));
 
@@ -204,7 +204,7 @@ class EmployeeControllerTest {
 
     @Test
     void updateEmployee_returnsNotFound_whenEmployeeDoesNotExist() throws Exception {
-        Employee attempted = new Employee(99L, "Ghost", "Employee", "ghost@example.com", ENGINEERING, 40, null);
+        Employee attempted = new Employee(99L, "Ghost", "Employee", "ghost@example.com", ENGINEERING, 40, null, null);
         when(service.update(eq(99L), any(Employee.class)))
                 .thenThrow(new EmployeeNotFoundException("Employee not found"));
 
@@ -265,6 +265,24 @@ class EmployeeControllerTest {
                 .thenThrow(new EmployeeNotFoundException("Employee not found with id: 99"));
 
         mockMvc.perform(get("/employees/{id}/temporary-address", 99L))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void getPermanentAddress_returnsAddress_whenEmployeeExists() throws Exception {
+        when(service.getPermanentAddress(1L)).thenReturn("10 Downing Street");
+
+        mockMvc.perform(get("/employees/{id}/permanent-address", 1L))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.permanentAddress").value("10 Downing Street"));
+    }
+
+    @Test
+    void getPermanentAddress_returnsNotFound_whenEmployeeDoesNotExist() throws Exception {
+        when(service.getPermanentAddress(99L))
+                .thenThrow(new EmployeeNotFoundException("Employee not found with id: 99"));
+
+        mockMvc.perform(get("/employees/{id}/permanent-address", 99L))
                 .andExpect(status().isNotFound());
     }
 }

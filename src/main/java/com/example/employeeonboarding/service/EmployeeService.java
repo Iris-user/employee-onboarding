@@ -54,6 +54,12 @@ public class EmployeeService {
                 .getTemporaryAddress();
     }
 
+    public String getPermanentAddress(Long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new EmployeeNotFoundException(EMPLOYEE_NOT_FOUND_MESSAGE + id))
+                .getPermanentAddress();
+    }
+
     public Employee updateLastName(Long id, String lastName) {
         Employee employee = repository.findById(id)
                 .orElseThrow(() -> new EmployeeNotFoundException(EMPLOYEE_NOT_FOUND_MESSAGE + id));

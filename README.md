@@ -6,7 +6,7 @@ Spring Boot Employee Onboarding API
 ### Create Employee
 `POST /employees`
 
-Creates a new employee. Requires all fields: `name`, `lastName`, `email`, `department`, and `age`. `department` is a reference to an existing department by `id` (see [Create Department](#create-department)). `temporaryAddress` is optional. Returns `400 Bad Request` if any required field is missing or blank, or `404 Not Found` if the referenced department `id` doesn't exist.
+Creates a new employee. Requires all fields: `name`, `lastName`, `email`, `department`, and `age`. `department` is a reference to an existing department by `id` (see [Create Department](#create-department)). `temporaryAddress` and `permanentAddress` are optional. Returns `400 Bad Request` if any required field is missing or blank, or `404 Not Found` if the referenced department `id` doesn't exist.
 
 **Request Body:**
 ```json
@@ -16,7 +16,8 @@ Creates a new employee. Requires all fields: `name`, `lastName`, `email`, `depar
   "email": "john.doe@example.com",
   "department": { "id": 1 },
   "age": 30,
-  "temporaryAddress": "42 Elm Street"
+  "temporaryAddress": "42 Elm Street",
+  "permanentAddress": "10 Downing Street"
 }
 ```
 
@@ -54,6 +55,18 @@ Returns an employee's temporary address by ID. Returns `404 Not Found` if the ID
 ```json
 {
   "temporaryAddress": "42 Elm Street"
+}
+```
+
+### Get Employee's Permanent Address
+`GET /employees/{id}/permanent-address`
+
+Returns an employee's permanent address by ID. Returns `404 Not Found` if the ID doesn't exist.
+
+**Response Body:**
+```json
+{
+  "permanentAddress": "10 Downing Street"
 }
 ```
 
