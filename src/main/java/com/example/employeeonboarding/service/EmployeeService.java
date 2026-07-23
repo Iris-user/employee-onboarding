@@ -2,6 +2,7 @@ package com.example.employeeonboarding.service;
 
 import com.example.employeeonboarding.exception.DepartmentNotFoundException;
 import com.example.employeeonboarding.exception.EmployeeNotFoundException;
+import com.example.employeeonboarding.exception.InvalidDepartmentReferenceException;
 import com.example.employeeonboarding.exception.LastNameUpdateNotAllowedException;
 import com.example.employeeonboarding.model.Department;
 import com.example.employeeonboarding.model.Employee;
@@ -33,7 +34,7 @@ public class EmployeeService {
 
     private Department resolveDepartment(Department department) {
         if (department == null || department.getId() == null) {
-            throw new DepartmentNotFoundException("Department id is required");
+            throw new InvalidDepartmentReferenceException("Department id is required");
         }
         return departmentRepository.findById(department.getId())
                 .orElseThrow(() -> new DepartmentNotFoundException("Department not found with id: " + department.getId()));

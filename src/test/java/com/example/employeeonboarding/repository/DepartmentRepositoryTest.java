@@ -16,18 +16,26 @@ class DepartmentRepositoryTest {
     private DepartmentRepository repository;
 
     @Test
-    void findByName_returnsDepartmentWhenNameExists() {
-        repository.save(new Department(null, "Engineering"));
+    void save_persistsDepartmentAndGeneratesId() {
+        Department saved = repository.save(new Department(null, "Engineering"));
 
-        Optional<Department> result = repository.findByName("Engineering");
+        assertThat(saved.getId()).isNotNull();
+        assertThat(saved.getName()).isEqualTo("Engineering");
+    }
+
+    @Test
+    void findById_returnsDepartmentWhenIdExists() {
+        Department saved = repository.save(new Department(null, "Engineering"));
+
+        Optional<Department> result = repository.findById(saved.getId());
 
         assertThat(result).isPresent();
         assertThat(result.get().getName()).isEqualTo("Engineering");
     }
 
     @Test
-    void findByName_returnsEmptyWhenNameDoesNotExist() {
-        Optional<Department> result = repository.findByName("Marketing");
+    void findById_returnsEmptyWhenIdDoesNotExist() {
+        Optional<Department> result = repository.findById(9999L);
 
         assertThat(result).isEmpty();
     }

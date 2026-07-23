@@ -2,6 +2,7 @@ package com.example.employeeonboarding.service;
 
 import com.example.employeeonboarding.exception.DepartmentNotFoundException;
 import com.example.employeeonboarding.exception.EmployeeNotFoundException;
+import com.example.employeeonboarding.exception.InvalidDepartmentReferenceException;
 import com.example.employeeonboarding.exception.LastNameUpdateNotAllowedException;
 import com.example.employeeonboarding.model.Department;
 import com.example.employeeonboarding.model.Employee;
@@ -65,6 +66,28 @@ class EmployeeServiceTest {
 
         assertThatThrownBy(() -> service.save(employeeWithUnknownDepartment))
                 .isInstanceOf(DepartmentNotFoundException.class);
+
+        verify(repository, never()).save(any(Employee.class));
+    }
+
+    @Test
+    void save_throwsInvalidDepartmentReferenceException_whenDepartmentIdMissing() {
+        Employee employeeWithoutDepartmentId =
+                new Employee(null, "John", "Doe", "john.doe@example.com", new Department(null, "Sales"), 30);
+
+        assertThatThrownBy(() -> service.save(employeeWithoutDepartmentId))
+                .isInstanceOf(InvalidDepartmentReferenceException.class);
+
+        verify(repository, never()).save(any(Employee.class));
+    }
+
+    @Test
+    void save_throwsInvalidDepartmentReferenceException_whenDepartmentMissing() {
+        Employee employeeWithoutDepartment =
+                new Employee(null, "John", "Doe", "john.doe@example.com", null, 30);
+
+        assertThatThrownBy(() -> service.save(employeeWithoutDepartment))
+                .isInstanceOf(InvalidDepartmentReferenceException.class);
 
         verify(repository, never()).save(any(Employee.class));
     }
@@ -222,6 +245,19 @@ class EmployeeServiceTest {
 
         assertThatThrownBy(() -> service.update(99L, update))
                 .isInstanceOf(EmployeeNotFoundException.class);
+    }
+
+    @Test
+    void update_throwsDepartmentNotFoundException_whenDepartmentDoesNotExist() {
+        when(repository.findById(1L)).thenReturn(Optional.of(employee));
+        when(departmentRepository.findById(999L)).thenReturn(Optional.empty());
+
+        Employee update = new Employee(null, "Johnny", "Doe", "johnny.doe@example.com", new Department(999L, null), 30);
+
+        assertThatThrownBy(() -> service.update(1L, update))
+                .isInstanceOf(DepartmentNotFoundException.class);
+
+        verify(repository, never()).save(any(Employee.class));
     }
 
     @Test
