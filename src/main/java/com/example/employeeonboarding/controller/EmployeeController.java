@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -34,6 +35,11 @@ public class EmployeeController {
     public ResponseEntity<Employee> getEmployeeById(@PathVariable Long id) {
         Employee employee = service.getById(id);
         return employee != null ? ResponseEntity.ok(employee) : ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/{id}/temporary-address")
+    public Map<String, String> getTemporaryAddress(@PathVariable Long id) {
+        return Collections.singletonMap("temporaryAddress", service.getTemporaryAddress(id));
     }
 
     @PatchMapping("/{id}/last-name")

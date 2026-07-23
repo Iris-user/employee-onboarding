@@ -24,9 +24,9 @@ class EmployeeRepositoryTest {
         Department engineering = departmentRepository.save(new Department(null, "Engineering"));
         Department sales = departmentRepository.save(new Department(null, "Sales"));
 
-        repository.save(new Employee(null, "Alice", "Smith", "alice@example.com", engineering, 27));
-        repository.save(new Employee(null, "Bob", "Jones", "bob@example.com", sales, 30));
-        repository.save(new Employee(null, "Carol", "White", "carol@example.com", engineering, 35));
+        repository.save(new Employee(null, "Alice", "Smith", "alice@example.com", engineering, 27, null));
+        repository.save(new Employee(null, "Bob", "Jones", "bob@example.com", sales, 30, null));
+        repository.save(new Employee(null, "Carol", "White", "carol@example.com", engineering, 35, null));
 
         List<Employee> result = repository.findByDepartmentName("Engineering");
 
@@ -36,7 +36,7 @@ class EmployeeRepositoryTest {
     @Test
     void findByDepartmentName_returnsEmptyListWhenNoEmployeesMatch() {
         Department engineering = departmentRepository.save(new Department(null, "Engineering"));
-        repository.save(new Employee(null, "Alice", "Smith", "alice@example.com", engineering, 27));
+        repository.save(new Employee(null, "Alice", "Smith", "alice@example.com", engineering, 27, null));
 
         List<Employee> result = repository.findByDepartmentName("Marketing");
 
@@ -48,9 +48,9 @@ class EmployeeRepositoryTest {
         Department engineering = departmentRepository.save(new Department(null, "Engineering"));
         Department sales = departmentRepository.save(new Department(null, "Sales"));
 
-        repository.save(new Employee(null, "Alice", "Smith", "alice@example.com", engineering, 30));
-        repository.save(new Employee(null, "Bob", "Jones", "bob@example.com", sales, 40));
-        repository.save(new Employee(null, "Carol", "White", "carol@example.com", engineering, 30));
+        repository.save(new Employee(null, "Alice", "Smith", "alice@example.com", engineering, 30, null));
+        repository.save(new Employee(null, "Bob", "Jones", "bob@example.com", sales, 40, null));
+        repository.save(new Employee(null, "Carol", "White", "carol@example.com", engineering, 30, null));
 
         List<Employee> result = repository.findByAge(30);
 
@@ -60,7 +60,7 @@ class EmployeeRepositoryTest {
     @Test
     void findByAge_returnsEmptyListWhenNoEmployeesMatch() {
         Department engineering = departmentRepository.save(new Department(null, "Engineering"));
-        repository.save(new Employee(null, "Alice", "Smith", "alice@example.com", engineering, 30));
+        repository.save(new Employee(null, "Alice", "Smith", "alice@example.com", engineering, 30, null));
 
         List<Employee> result = repository.findByAge(99);
 
@@ -72,8 +72,8 @@ class EmployeeRepositoryTest {
         Department engineering = departmentRepository.save(new Department(null, "Engineering"));
         Department sales = departmentRepository.save(new Department(null, "Sales"));
 
-        repository.save(new Employee(null, "Alice", "Smith", "alice@example.com", engineering, 30));
-        repository.save(new Employee(null, "Bob", "Jones", "bob@example.com", sales, 40));
+        repository.save(new Employee(null, "Alice", "Smith", "alice@example.com", engineering, 30, null));
+        repository.save(new Employee(null, "Bob", "Jones", "bob@example.com", sales, 40, null));
 
         List<Employee> result = repository.findByEmail("alice@example.com");
 
@@ -83,7 +83,7 @@ class EmployeeRepositoryTest {
     @Test
     void findByEmail_returnsEmptyListWhenNoEmployeesMatch() {
         Department engineering = departmentRepository.save(new Department(null, "Engineering"));
-        repository.save(new Employee(null, "Alice", "Smith", "alice@example.com", engineering, 30));
+        repository.save(new Employee(null, "Alice", "Smith", "alice@example.com", engineering, 30, null));
 
         List<Employee> result = repository.findByEmail("nobody@example.com");
 
