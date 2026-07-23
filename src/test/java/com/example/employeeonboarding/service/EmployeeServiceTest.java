@@ -1,8 +1,12 @@
 package com.example.employeeonboarding.service;
 
+import com.example.employeeonboarding.exception.DepartmentNotFoundException;
 import com.example.employeeonboarding.exception.EmployeeNotFoundException;
+import com.example.employeeonboarding.exception.InvalidDepartmentReferenceException;
 import com.example.employeeonboarding.exception.LastNameUpdateNotAllowedException;
+import com.example.employeeonboarding.model.Department;
 import com.example.employeeonboarding.model.Employee;
+import com.example.employeeonboarding.repository.DepartmentRepository;
 import com.example.employeeonboarding.repository.EmployeeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,24 +28,68 @@ class EmployeeServiceTest {
     @Mock
     private EmployeeRepository repository;
 
+    @Mock
+    private DepartmentRepository departmentRepository;
+
     private EmployeeService service;
 
     private Employee employee;
 
+    private Department engineering;
+
+    private Department sales;
+
     @BeforeEach
     void setUp() {
-        service = new EmployeeService(repository);
-        employee = new Employee(1L, "John", "Doe", "john.doe@example.com", "Engineering", 30);
+        service = new EmployeeService(repository, departmentRepository);
+        engineering = new Department(10L, "Engineering");
+        sales = new Department(20L, "Sales");
+        employee = new Employee(1L, "John", "Doe", "john.doe@example.com", engineering, 30);
     }
 
     @Test
     void shouldSaveEmployeeWithLastName() {
+        when(departmentRepository.findById(10L)).thenReturn(Optional.of(engineering));
         when(repository.save(any(Employee.class))).thenReturn(employee);
 
         Employee saved = service.save(employee);
 
         assertThat(saved.getLastName()).isEqualTo("Doe");
         verify(repository, times(1)).save(employee);
+    }
+
+    @Test
+    void save_throwsDepartmentNotFoundException_whenDepartmentDoesNotExist() {
+        Employee employeeWithUnknownDepartment =
+                new Employee(null, "John", "Doe", "john.doe@example.com", new Department(999L, null), 30);
+        when(departmentRepository.findById(999L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> service.save(employeeWithUnknownDepartment))
+                .isInstanceOf(DepartmentNotFoundException.class);
+
+        verify(repository, never()).save(any(Employee.class));
+    }
+
+    @Test
+    void save_throwsInvalidDepartmentReferenceException_whenDepartmentIdMissing() {
+        Employee employeeWithoutDepartmentId =
+                new Employee(null, "John", "Doe", "john.doe@example.com", new Department(null, "Sales"), 30);
+
+        assertThatThrownBy(() -> service.save(employeeWithoutDepartmentId))
+                .isInstanceOf(InvalidDepartmentReferenceException.class);
+
+        verify(repository, never()).save(any(Employee.class));
+    }
+
+    @Test
+    void save_throwsInvalidDepartmentReferenceException_whenDepartmentMissing() {
+        Employee employeeWithoutDepartment =
+                new Employee(null, "John", "Doe", "john.doe@example.com", null, 30);
+
+        assertThatThrownBy(() -> service.save(employeeWithoutDepartment))
+                .isInstanceOf(InvalidDepartmentReferenceException.class);
+
+        verify(repository, never()).save(any(Employee.class));
     }
 
     @Test
@@ -93,8 +141,8 @@ class EmployeeServiceTest {
 
     @Test
     void getByDepartment_returnsOnlyMatchingEmployees() {
-        Employee engineer = new Employee(1L, "Alice", "Smith", "alice@example.com", "Engineering", 27);
-        when(repository.findByDepartment("Engineering")).thenReturn(List.of(engineer));
+        Employee engineer = new Employee(1L, "Alice", "Smith", "alice@example.com", engineering, 27);
+        when(repository.findByDepartmentName("Engineering")).thenReturn(List.of(engineer));
 
         List<Employee> result = service.getByDepartment("Engineering");
 
@@ -103,7 +151,7 @@ class EmployeeServiceTest {
 
     @Test
     void getByDepartment_returnsEmptyListWhenNoMatch() {
-        when(repository.findByDepartment("Marketing")).thenReturn(List.of());
+        when(repository.findByDepartmentName("Marketing")).thenReturn(List.of());
 
         List<Employee> result = service.getByDepartment("Marketing");
 
@@ -112,7 +160,7 @@ class EmployeeServiceTest {
 
     @Test
     void getByAge_returnsOnlyMatchingEmployees() {
-        Employee thirtyYearOld = new Employee(1L, "Alice", "Smith", "alice@example.com", "Engineering", 30);
+        Employee thirtyYearOld = new Employee(1L, "Alice", "Smith", "alice@example.com", engineering, 30);
         when(repository.findByAge(30)).thenReturn(List.of(thirtyYearOld));
 
         List<Employee> result = service.getByAge(30);
@@ -131,7 +179,7 @@ class EmployeeServiceTest {
 
     @Test
     void getByEmail_returnsOnlyMatchingEmployees() {
-        Employee alice = new Employee(1L, "Alice", "Smith", "alice@example.com", "Engineering", 30);
+        Employee alice = new Employee(1L, "Alice", "Smith", "alice@example.com", engineering, 30);
         when(repository.findByEmail("alice@example.com")).thenReturn(List.of(alice));
 
         List<Employee> result = service.getByEmail("alice@example.com");
@@ -151,24 +199,26 @@ class EmployeeServiceTest {
     @Test
     void update_appliesChangesToNameEmailAndDepartment_whenLastNameUnchanged() {
         when(repository.findById(1L)).thenReturn(Optional.of(employee));
+        when(departmentRepository.findById(20L)).thenReturn(Optional.of(sales));
         when(repository.save(any(Employee.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        Employee update = new Employee(null, "Johnny", "Doe", "johnny.doe@example.com", "Sales", 30);
+        Employee update = new Employee(null, "Johnny", "Doe", "johnny.doe@example.com", sales, 30);
 
         Employee result = service.update(1L, update);
 
         assertThat(result.getName()).isEqualTo("Johnny");
         assertThat(result.getEmail()).isEqualTo("johnny.doe@example.com");
-        assertThat(result.getDepartment()).isEqualTo("Sales");
+        assertThat(result.getDepartment()).isEqualTo(sales);
         assertThat(result.getLastName()).isEqualTo("Doe");
     }
 
     @Test
     void update_leavesLastNameUnchanged_whenRequestOmitsLastName() {
         when(repository.findById(1L)).thenReturn(Optional.of(employee));
+        when(departmentRepository.findById(20L)).thenReturn(Optional.of(sales));
         when(repository.save(any(Employee.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        Employee update = new Employee(null, "Johnny", null, "johnny.doe@example.com", "Sales", 30);
+        Employee update = new Employee(null, "Johnny", null, "johnny.doe@example.com", sales, 30);
 
         Employee result = service.update(1L, update);
 
@@ -179,7 +229,7 @@ class EmployeeServiceTest {
     void update_throwsLastNameUpdateNotAllowedException_whenLastNameIsChanged() {
         when(repository.findById(1L)).thenReturn(Optional.of(employee));
 
-        Employee update = new Employee(null, "John", "Doeson", "john.doe@example.com", "Engineering", 30);
+        Employee update = new Employee(null, "John", "Doeson", "john.doe@example.com", engineering, 30);
 
         assertThatThrownBy(() -> service.update(1L, update))
                 .isInstanceOf(LastNameUpdateNotAllowedException.class);
@@ -191,10 +241,23 @@ class EmployeeServiceTest {
     void update_throwsEmployeeNotFoundException_whenEmployeeDoesNotExist() {
         when(repository.findById(99L)).thenReturn(Optional.empty());
 
-        Employee update = new Employee(null, "Ghost", "Employee", "ghost@example.com", "Ops", 40);
+        Employee update = new Employee(null, "Ghost", "Employee", "ghost@example.com", engineering, 40);
 
         assertThatThrownBy(() -> service.update(99L, update))
                 .isInstanceOf(EmployeeNotFoundException.class);
+    }
+
+    @Test
+    void update_throwsDepartmentNotFoundException_whenDepartmentDoesNotExist() {
+        when(repository.findById(1L)).thenReturn(Optional.of(employee));
+        when(departmentRepository.findById(999L)).thenReturn(Optional.empty());
+
+        Employee update = new Employee(null, "Johnny", "Doe", "johnny.doe@example.com", new Department(999L, null), 30);
+
+        assertThatThrownBy(() -> service.update(1L, update))
+                .isInstanceOf(DepartmentNotFoundException.class);
+
+        verify(repository, never()).save(any(Employee.class));
     }
 
     @Test
@@ -230,8 +293,9 @@ class EmployeeServiceTest {
     void deleteByIds_throwsEmployeeNotFoundException_whenAnyIdDoesNotExist() {
         when(repository.existsById(1L)).thenReturn(true);
         when(repository.existsById(99L)).thenReturn(false);
+        List<Long> ids = List.of(1L, 99L);
 
-        assertThatThrownBy(() -> service.deleteByIds(List.of(1L, 99L)))
+        assertThatThrownBy(() -> service.deleteByIds(ids))
                 .isInstanceOf(EmployeeNotFoundException.class);
 
         verify(repository, never()).deleteAllById(any());

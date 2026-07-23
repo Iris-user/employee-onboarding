@@ -6,7 +6,7 @@ Spring Boot Employee Onboarding API
 ### Create Employee
 `POST /employees`
 
-Creates a new employee. Requires all fields: `name`, `lastName`, `email`, `department`, and `age`. Returns `400 Bad Request` if any field is missing or blank.
+Creates a new employee. Requires all fields: `name`, `lastName`, `email`, `department`, and `age`. `department` is a reference to an existing department by `id` (see [Create Department](#create-department)). Returns `400 Bad Request` if any field is missing or blank, or `404 Not Found` if the referenced department `id` doesn't exist.
 
 **Request Body:**
 ```json
@@ -14,7 +14,7 @@ Creates a new employee. Requires all fields: `name`, `lastName`, `email`, `depar
   "name": "John",
   "lastName": "Doe",
   "email": "john.doe@example.com",
-  "department": "Engineering",
+  "department": { "id": 1 },
   "age": 30
 }
 ```
@@ -47,7 +47,7 @@ Returns a list of employees filtered by email address. Returns an empty list if 
 ### Update Employee
 `PUT /employees/{id}`
 
-Updates an existing employee's `name`, `email`, and `department`. Returns `404 Not Found` if the ID doesn't exist.
+Updates an existing employee's `name`, `email`, and `department`. Returns `404 Not Found` if the employee ID or the referenced department `id` doesn't exist.
 
 ### Update Employee Last Name
 `PATCH /employees/{id}/last-name`
@@ -76,6 +76,28 @@ Deletes employees for a list of IDs passed in the request body. Returns `204 No 
   "ids": [1, 2, 3]
 }
 ```
+
+### Create Department
+`POST /departments`
+
+Creates a new department. Requires `name`. Returns `400 Bad Request` if `name` is missing or blank.
+
+**Request Body:**
+```json
+{
+  "name": "Engineering"
+}
+```
+
+### Get All Departments
+`GET /departments`
+
+Returns a list of all departments.
+
+### Get Department By ID
+`GET /departments/{id}`
+
+Returns a department's details by ID. Returns `404 Not Found` if the ID doesn't exist.
 
 ## API Documentation
 

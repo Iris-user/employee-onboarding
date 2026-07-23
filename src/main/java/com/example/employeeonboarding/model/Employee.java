@@ -24,8 +24,10 @@ public class Employee {
     @NotBlank(message = "email is required")
     private String email;
 
-    @NotBlank(message = "department is required")
-    private String department;
+    @NotNull(message = "department is required")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "department_id")
+    private Department department;
 
     @NotNull(message = "age is required")
     private Integer age;

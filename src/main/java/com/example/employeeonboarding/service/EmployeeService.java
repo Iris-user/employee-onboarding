@@ -1,8 +1,12 @@
 package com.example.employeeonboarding.service;
 
+import com.example.employeeonboarding.exception.DepartmentNotFoundException;
 import com.example.employeeonboarding.exception.EmployeeNotFoundException;
+import com.example.employeeonboarding.exception.InvalidDepartmentReferenceException;
 import com.example.employeeonboarding.exception.LastNameUpdateNotAllowedException;
+import com.example.employeeonboarding.model.Department;
 import com.example.employeeonboarding.model.Employee;
+import com.example.employeeonboarding.repository.DepartmentRepository;
 import com.example.employeeonboarding.repository.EmployeeRepository;
 import org.springframework.stereotype.Service;
 
@@ -16,12 +20,24 @@ public class EmployeeService {
 
     private final EmployeeRepository repository;
 
-    public EmployeeService(EmployeeRepository repository) {
+    private final DepartmentRepository departmentRepository;
+
+    public EmployeeService(EmployeeRepository repository, DepartmentRepository departmentRepository) {
         this.repository = repository;
+        this.departmentRepository = departmentRepository;
     }
 
     public Employee save(Employee emp) {
+        emp.setDepartment(resolveDepartment(emp.getDepartment()));
         return repository.save(emp);
+    }
+
+    private Department resolveDepartment(Department department) {
+        if (department == null || department.getId() == null) {
+            throw new InvalidDepartmentReferenceException("Department id is required");
+        }
+        return departmentRepository.findById(department.getId())
+                .orElseThrow(() -> new DepartmentNotFoundException("Department not found with id: " + department.getId()));
     }
 
     public List<Employee> getAll() {
@@ -40,7 +56,7 @@ public class EmployeeService {
     }
 
     public List<Employee> getByDepartment(String department) {
-        return repository.findByDepartment(department);
+        return repository.findByDepartmentName(department);
     }
 
     public List<Employee> getByAge(Integer age) {
@@ -62,7 +78,7 @@ public class EmployeeService {
 
         existingEmployee.setName(updatedEmployee.getName());
         existingEmployee.setEmail(updatedEmployee.getEmail());
-        existingEmployee.setDepartment(updatedEmployee.getDepartment());
+        existingEmployee.setDepartment(resolveDepartment(updatedEmployee.getDepartment()));
 
         return repository.save(existingEmployee);
     }
