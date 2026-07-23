@@ -6,7 +6,7 @@ Spring Boot Employee Onboarding API
 ### Create Employee
 `POST /employees`
 
-Creates a new employee. Requires all fields: `name`, `lastName`, `email`, `department`, and `age`. `department` is a reference to an existing department by `id` (see [Create Department](#create-department)). Returns `400 Bad Request` if any field is missing or blank, or `404 Not Found` if the referenced department `id` doesn't exist.
+Creates a new employee. Requires all fields: `name`, `lastName`, `email`, `department`, and `age`. `department` is a reference to an existing department by `id` (see [Create Department](#create-department)). `temporaryAddress` is optional. Returns `400 Bad Request` if any required field is missing or blank, or `404 Not Found` if the referenced department `id` doesn't exist.
 
 **Request Body:**
 ```json
@@ -15,7 +15,8 @@ Creates a new employee. Requires all fields: `name`, `lastName`, `email`, `depar
   "lastName": "Doe",
   "email": "john.doe@example.com",
   "department": { "id": 1 },
-  "age": 30
+  "age": 30,
+  "temporaryAddress": "42 Elm Street"
 }
 ```
 
@@ -43,6 +44,18 @@ Returns a list of employees filtered by age. Returns an empty list if no employe
 `GET /employees/email/{email}`
 
 Returns a list of employees filtered by email address. Returns an empty list if no employees match.
+
+### Get Employee's Temporary Address
+`GET /employees/{id}/temporary-address`
+
+Returns an employee's temporary address by ID. Returns `404 Not Found` if the ID doesn't exist.
+
+**Response Body:**
+```json
+{
+  "temporaryAddress": "42 Elm Street"
+}
+```
 
 ### Update Employee
 `PUT /employees/{id}`

@@ -31,4 +31,6 @@ public class Employee {
 
     @NotNull(message = "age is required")
     private Integer age;
+
+    private String temporaryAddress;
 }
