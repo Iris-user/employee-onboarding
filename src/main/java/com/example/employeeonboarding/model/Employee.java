@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.time.LocalDate;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -35,4 +37,6 @@ public class Employee {
     private String temporaryAddress;
 
     private String permanentAddress;
+
+    private LocalDate dob;
 }

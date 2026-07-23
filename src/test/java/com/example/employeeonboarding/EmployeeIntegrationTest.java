@@ -13,6 +13,8 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDate;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -65,7 +67,7 @@ class EmployeeIntegrationTest {
     @Test
     void shouldGetAllEmployees() throws Exception {
         Department finance = departmentRepository.save(new Department(null, "Finance"));
-        employeeService.save(new Employee(null, "Bob", "Brown", "bob@example.com", finance, 30, null, null));
+        employeeService.save(new Employee(null, "Bob", "Brown", "bob@example.com", finance, 30, null, null, null));
 
         mockMvc.perform(get("/employees"))
                 .andExpect(status().isOk())
@@ -75,7 +77,7 @@ class EmployeeIntegrationTest {
     @Test
     void shouldUpdateLastNameViaEndpoint() throws Exception {
         Department it = departmentRepository.save(new Department(null, "IT"));
-        Employee saved = employeeService.save(new Employee(null, "Carol", "White", "carol@example.com", it, 30, null, null));
+        Employee saved = employeeService.save(new Employee(null, "Carol", "White", "carol@example.com", it, 30, null, null, null));
 
         mockMvc.perform(patch("/employees/" + saved.getId() + "/last-name")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -87,7 +89,7 @@ class EmployeeIntegrationTest {
     @Test
     void shouldUpdateLastNameViaService() {
         Department legal = departmentRepository.save(new Department(null, "Legal"));
-        Employee saved = employeeService.save(new Employee(null, "Dan", "Green", "dan@example.com", legal, 30, null, null));
+        Employee saved = employeeService.save(new Employee(null, "Dan", "Green", "dan@example.com", legal, 30, null, null, null));
 
         Employee updated = employeeService.updateLastName(saved.getId(), "Grey");
 
@@ -102,7 +104,7 @@ class EmployeeIntegrationTest {
     @Test
     void shouldDeleteEmployeeViaEndpoint() throws Exception {
         Department support = departmentRepository.save(new Department(null, "Support"));
-        Employee saved = employeeService.save(new Employee(null, "Eve", "Black", "eve@example.com", support, 30, null, null));
+        Employee saved = employeeService.save(new Employee(null, "Eve", "Black", "eve@example.com", support, 30, null, null, null));
 
         mockMvc.perform(delete("/employees/" + saved.getId()))
                 .andExpect(status().isNoContent());
@@ -120,8 +122,8 @@ class EmployeeIntegrationTest {
     void shouldDeleteMultipleEmployeesViaEndpoint() throws Exception {
         Department sales = departmentRepository.save(new Department(null, "Sales"));
         Department engineering = departmentRepository.save(new Department(null, "Engineering"));
-        Employee first = employeeService.save(new Employee(null, "Frank", "Miller", "frank@example.com", sales, 40, null, null));
-        Employee second = employeeService.save(new Employee(null, "Grace", "Hopper", "grace@example.com", engineering, 45, null, null));
+        Employee first = employeeService.save(new Employee(null, "Frank", "Miller", "frank@example.com", sales, 40, null, null, null));
+        Employee second = employeeService.save(new Employee(null, "Grace", "Hopper", "grace@example.com", engineering, 45, null, null, null));
 
         mockMvc.perform(delete("/employees")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -135,7 +137,7 @@ class EmployeeIntegrationTest {
     @Test
     void shouldReturnNotFoundWhenDeletingMultipleEmployeesWithUnknownId() throws Exception {
         Department engineering = departmentRepository.save(new Department(null, "Engineering"));
-        Employee saved = employeeService.save(new Employee(null, "Henry", "Ford", "henry@example.com", engineering, 50, null, null));
+        Employee saved = employeeService.save(new Employee(null, "Henry", "Ford", "henry@example.com", engineering, 50, null, null, null));
 
         mockMvc.perform(delete("/employees")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -149,7 +151,7 @@ class EmployeeIntegrationTest {
     void shouldGetTemporaryAddressViaEndpoint() throws Exception {
         Department engineering = departmentRepository.save(new Department(null, "Engineering"));
         Employee saved = employeeService.save(
-                new Employee(null, "Ivy", "Stone", "ivy@example.com", engineering, 26, "42 Elm Street", null));
+                new Employee(null, "Ivy", "Stone", "ivy@example.com", engineering, 26, "42 Elm Street", null, null));
 
         mockMvc.perform(get("/employees/" + saved.getId() + "/temporary-address"))
                 .andExpect(status().isOk())
@@ -166,7 +168,7 @@ class EmployeeIntegrationTest {
     void shouldGetPermanentAddressViaEndpoint() throws Exception {
         Department engineering = departmentRepository.save(new Department(null, "Engineering"));
         Employee saved = employeeService.save(
-                new Employee(null, "Ivy", "Stone", "ivy@example.com", engineering, 26, null, "10 Downing Street"));
+                new Employee(null, "Ivy", "Stone", "ivy@example.com", engineering, 26, null, "10 Downing Street", null));
 
         mockMvc.perform(get("/employees/" + saved.getId() + "/permanent-address"))
                 .andExpect(status().isOk())
@@ -177,5 +179,16 @@ class EmployeeIntegrationTest {
     void shouldReturnNotFoundWhenGettingPermanentAddressForNonExistentEmployee() throws Exception {
         mockMvc.perform(get("/employees/9999/permanent-address"))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void shouldReturnDobWhenFetchingEmployeeByIdViaEndpoint() throws Exception {
+        Department engineering = departmentRepository.save(new Department(null, "Engineering"));
+        Employee saved = employeeService.save(
+                new Employee(null, "Ivy", "Stone", "ivy@example.com", engineering, 26, null, null, LocalDate.of(1990, 5, 15)));
+
+        mockMvc.perform(get("/employees/" + saved.getId()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.dob").value("1990-05-15"));
     }
 }

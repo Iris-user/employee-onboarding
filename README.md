@@ -6,7 +6,7 @@ Spring Boot Employee Onboarding API
 ### Create Employee
 `POST /employees`
 
-Creates a new employee. Requires all fields: `name`, `lastName`, `email`, `department`, and `age`. `department` is a reference to an existing department by `id` (see [Create Department](#create-department)). `temporaryAddress` and `permanentAddress` are optional. Returns `400 Bad Request` if any required field is missing or blank, or `404 Not Found` if the referenced department `id` doesn't exist.
+Creates a new employee. Requires all fields: `name`, `lastName`, `email`, `department`, and `age`. `department` is a reference to an existing department by `id` (see [Create Department](#create-department)). `temporaryAddress`, `permanentAddress`, and `dob` are optional. Returns `400 Bad Request` if any required field is missing or blank, or `404 Not Found` if the referenced department `id` doesn't exist.
 
 **Request Body:**
 ```json
@@ -17,7 +17,8 @@ Creates a new employee. Requires all fields: `name`, `lastName`, `email`, `depar
   "department": { "id": 1 },
   "age": 30,
   "temporaryAddress": "42 Elm Street",
-  "permanentAddress": "10 Downing Street"
+  "permanentAddress": "10 Downing Street",
+  "dob": "1990-05-15"
 }
 ```
 
@@ -29,7 +30,7 @@ Returns a list of all employees.
 ### Get Employee By ID
 `GET /employees/{id}`
 
-Returns an employee's details by ID. Returns `404 Not Found` if the ID doesn't exist.
+Returns an employee's details, including `dob`, by ID. Returns `404 Not Found` if the ID doesn't exist.
 
 ### Get Employees By Department
 `GET /employees/department/{department}`
