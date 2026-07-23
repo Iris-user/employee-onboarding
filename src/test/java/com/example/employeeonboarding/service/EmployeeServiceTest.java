@@ -14,6 +14,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,7 +45,7 @@ class EmployeeServiceTest {
         service = new EmployeeService(repository, departmentRepository);
         engineering = new Department(10L, "Engineering");
         sales = new Department(20L, "Sales");
-        employee = new Employee(1L, "John", "Doe", "john.doe@example.com", engineering, 30, null, null);
+        employee = new Employee(1L, "John", "Doe", "john.doe@example.com", engineering, 30, null, null, null);
     }
 
     @Test
@@ -61,7 +62,7 @@ class EmployeeServiceTest {
     @Test
     void save_throwsDepartmentNotFoundException_whenDepartmentDoesNotExist() {
         Employee employeeWithUnknownDepartment =
-                new Employee(null, "John", "Doe", "john.doe@example.com", new Department(999L, null), 30, null, null);
+                new Employee(null, "John", "Doe", "john.doe@example.com", new Department(999L, null), 30, null, null, null);
         when(departmentRepository.findById(999L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.save(employeeWithUnknownDepartment))
@@ -73,7 +74,7 @@ class EmployeeServiceTest {
     @Test
     void save_throwsInvalidDepartmentReferenceException_whenDepartmentIdMissing() {
         Employee employeeWithoutDepartmentId =
-                new Employee(null, "John", "Doe", "john.doe@example.com", new Department(null, "Sales"), 30, null, null);
+                new Employee(null, "John", "Doe", "john.doe@example.com", new Department(null, "Sales"), 30, null, null, null);
 
         assertThatThrownBy(() -> service.save(employeeWithoutDepartmentId))
                 .isInstanceOf(InvalidDepartmentReferenceException.class);
@@ -84,7 +85,7 @@ class EmployeeServiceTest {
     @Test
     void save_throwsInvalidDepartmentReferenceException_whenDepartmentMissing() {
         Employee employeeWithoutDepartment =
-                new Employee(null, "John", "Doe", "john.doe@example.com", null, 30, null, null);
+                new Employee(null, "John", "Doe", "john.doe@example.com", null, 30, null, null, null);
 
         assertThatThrownBy(() -> service.save(employeeWithoutDepartment))
                 .isInstanceOf(InvalidDepartmentReferenceException.class);
@@ -141,7 +142,7 @@ class EmployeeServiceTest {
 
     @Test
     void getByDepartment_returnsOnlyMatchingEmployees() {
-        Employee engineer = new Employee(1L, "Alice", "Smith", "alice@example.com", engineering, 27, null, null);
+        Employee engineer = new Employee(1L, "Alice", "Smith", "alice@example.com", engineering, 27, null, null, null);
         when(repository.findByDepartmentName("Engineering")).thenReturn(List.of(engineer));
 
         List<Employee> result = service.getByDepartment("Engineering");
@@ -160,7 +161,7 @@ class EmployeeServiceTest {
 
     @Test
     void getByAge_returnsOnlyMatchingEmployees() {
-        Employee thirtyYearOld = new Employee(1L, "Alice", "Smith", "alice@example.com", engineering, 30, null, null);
+        Employee thirtyYearOld = new Employee(1L, "Alice", "Smith", "alice@example.com", engineering, 30, null, null, null);
         when(repository.findByAge(30)).thenReturn(List.of(thirtyYearOld));
 
         List<Employee> result = service.getByAge(30);
@@ -179,7 +180,7 @@ class EmployeeServiceTest {
 
     @Test
     void getByEmail_returnsOnlyMatchingEmployees() {
-        Employee alice = new Employee(1L, "Alice", "Smith", "alice@example.com", engineering, 30, null, null);
+        Employee alice = new Employee(1L, "Alice", "Smith", "alice@example.com", engineering, 30, null, null, null);
         when(repository.findByEmail("alice@example.com")).thenReturn(List.of(alice));
 
         List<Employee> result = service.getByEmail("alice@example.com");
@@ -202,7 +203,7 @@ class EmployeeServiceTest {
         when(departmentRepository.findById(20L)).thenReturn(Optional.of(sales));
         when(repository.save(any(Employee.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        Employee update = new Employee(null, "Johnny", "Doe", "johnny.doe@example.com", sales, 30, null, null);
+        Employee update = new Employee(null, "Johnny", "Doe", "johnny.doe@example.com", sales, 30, null, null, null);
 
         Employee result = service.update(1L, update);
 
@@ -218,7 +219,7 @@ class EmployeeServiceTest {
         when(departmentRepository.findById(20L)).thenReturn(Optional.of(sales));
         when(repository.save(any(Employee.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        Employee update = new Employee(null, "Johnny", null, "johnny.doe@example.com", sales, 30, null, null);
+        Employee update = new Employee(null, "Johnny", null, "johnny.doe@example.com", sales, 30, null, null, null);
 
         Employee result = service.update(1L, update);
 
@@ -229,7 +230,7 @@ class EmployeeServiceTest {
     void update_throwsLastNameUpdateNotAllowedException_whenLastNameIsChanged() {
         when(repository.findById(1L)).thenReturn(Optional.of(employee));
 
-        Employee update = new Employee(null, "John", "Doeson", "john.doe@example.com", engineering, 30, null, null);
+        Employee update = new Employee(null, "John", "Doeson", "john.doe@example.com", engineering, 30, null, null, null);
 
         assertThatThrownBy(() -> service.update(1L, update))
                 .isInstanceOf(LastNameUpdateNotAllowedException.class);
@@ -241,7 +242,7 @@ class EmployeeServiceTest {
     void update_throwsEmployeeNotFoundException_whenEmployeeDoesNotExist() {
         when(repository.findById(99L)).thenReturn(Optional.empty());
 
-        Employee update = new Employee(null, "Ghost", "Employee", "ghost@example.com", engineering, 40, null, null);
+        Employee update = new Employee(null, "Ghost", "Employee", "ghost@example.com", engineering, 40, null, null, null);
 
         assertThatThrownBy(() -> service.update(99L, update))
                 .isInstanceOf(EmployeeNotFoundException.class);
@@ -252,7 +253,7 @@ class EmployeeServiceTest {
         when(repository.findById(1L)).thenReturn(Optional.of(employee));
         when(departmentRepository.findById(999L)).thenReturn(Optional.empty());
 
-        Employee update = new Employee(null, "Johnny", "Doe", "johnny.doe@example.com", new Department(999L, null), 30, null, null);
+        Employee update = new Employee(null, "Johnny", "Doe", "johnny.doe@example.com", new Department(999L, null), 30, null, null, null);
 
         assertThatThrownBy(() -> service.update(1L, update))
                 .isInstanceOf(DepartmentNotFoundException.class);
@@ -303,7 +304,7 @@ class EmployeeServiceTest {
 
     @Test
     void getTemporaryAddress_returnsAddress_whenEmployeeExists() {
-        Employee employeeWithAddress = new Employee(1L, "John", "Doe", "john.doe@example.com", engineering, 30, "221B Baker Street", null);
+        Employee employeeWithAddress = new Employee(1L, "John", "Doe", "john.doe@example.com", engineering, 30, "221B Baker Street", null, null);
         when(repository.findById(1L)).thenReturn(Optional.of(employeeWithAddress));
 
         String result = service.getTemporaryAddress(1L);
@@ -321,7 +322,7 @@ class EmployeeServiceTest {
 
     @Test
     void getPermanentAddress_returnsAddress_whenEmployeeExists() {
-        Employee employeeWithAddress = new Employee(1L, "John", "Doe", "john.doe@example.com", engineering, 30, null, "10 Downing Street");
+        Employee employeeWithAddress = new Employee(1L, "John", "Doe", "john.doe@example.com", engineering, 30, null, "10 Downing Street", null);
         when(repository.findById(1L)).thenReturn(Optional.of(employeeWithAddress));
 
         String result = service.getPermanentAddress(1L);
@@ -335,5 +336,15 @@ class EmployeeServiceTest {
 
         assertThatThrownBy(() -> service.getPermanentAddress(99L))
                 .isInstanceOf(EmployeeNotFoundException.class);
+    }
+
+    @Test
+    void getById_returnsEmployeeWithDob_whenIdExists() {
+        Employee employeeWithDob = new Employee(1L, "John", "Doe", "john.doe@example.com", engineering, 30, null, null, LocalDate.of(1990, 5, 15));
+        when(repository.findById(1L)).thenReturn(Optional.of(employeeWithDob));
+
+        Employee result = service.getById(1L);
+
+        assertThat(result.getDob()).isEqualTo(LocalDate.of(1990, 5, 15));
     }
 }
