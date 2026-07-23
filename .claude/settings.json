@@ -20,8 +20,6 @@
       "Bash(unzip -l /c/Users/astha.jain/.m2/repository/org/springframework/boot/spring-boot-test/4.0.5/spring-boot-test-4.0.5.jar)",
       "Bash(unzip -l /c/Users/astha.jain/.m2/repository/org/springframework/spring-test/7.0.6/spring-test-7.0.6.jar)",
       "Bash(cat /d/ClaudeCodePOC/employee-onboarding/.sonar*)",
-      "Bash(\"/c/Program Files/JetBrains/IntelliJ IDEA 2026.1/plugins/maven/lib/maven3/bin/mvn\" sonar:sonar -Dsonar.host.url=http://localhost:9000 -Dsonar.token=squ_5d002d95e337ee41bc1cc37ea64d092678339087)",
-      "Bash(\"/c/Program Files/JetBrains/IntelliJ IDEA 2026.1/plugins/maven/lib/maven3/bin/mvn\" sonar:sonar -Dsonar.host.url=http://localhost:9000 -Dsonar.login=squ_5d002d95e337ee41bc1cc37ea64d092678339087)",
       "mcp__sonar__issues",
       "mcp__github__get_me",
       "mcp__github__list_branches",
@@ -33,8 +31,6 @@
       "Bash(\"/c/Program Files/JetBrains/IntelliJ IDEA 2026.1/plugins/maven/lib/maven3/bin/mvn\" test -f /d/ClaudeCodePOC/employee-onboarding/pom.xml)",
       "Bash('/c/Program Files/JetBrains/IntelliJ IDEA 2026.1/plugins/maven/lib/maven3/bin/mvn' test -f /d/ClaudeCodePOC/employee-onboarding/pom.xml)",
       "Bash(/c/Java/bin/jar.exe tf:*)",
-      "Bash('/c/Program Files/JetBrains/IntelliJ IDEA 2026.1/plugins/maven/lib/maven3/bin/mvn' sonar:sonar -Dsonar.host.url=http://localhost:9000 -Dsonar.token=squ_5d002d95e337ee41bc1cc37ea64d092678339087 -f /d/ClaudeCodePOC/employee-onboarding/pom.xml)",
-      "Bash('/c/Program Files/JetBrains/IntelliJ IDEA 2026.1/plugins/maven/lib/maven3/bin/mvn' sonar:sonar -Dsonar.host.url=http://localhost:9000 -Dsonar.login=squ_5d002d95e337ee41bc1cc37ea64d092678339087 -f /d/ClaudeCodePOC/employee-onboarding/pom.xml)",
       "mcp__sonar__quality_gate_status"
     ],
     "deny": [

@@ -1,0 +1,12 @@
+===== 2026-07-23 13:34:51 =====
+Permission allow rule (.claude\settings.json): Write(**) is not matched by file permission checks — only Edit(path) rules are. Use Edit(**) instead (Edit rules cover all file-editing tools).
+All 12 Done TC tickets (TC-1, TC-2, TC-3, TC-4, TC-5, TC-7, TC-8, TC-9, TC-10, TC-11, TC-12, TC-13) are already present in the Release Notes table — no pagination token was returned, so that's the complete Done set. Nothing to sync.
+
+===== 2026-07-23 14:11:21 =====
+Permission allow rule (.claude\settings.json): Write(**) is not matched by file permission checks — only Edit(path) rules are. Use Edit(**) instead (Edit rules cover all file-editing tools).
+All 13 Done tickets in the TC project (TC-1 through TC-14, skipping non-existent ones) are already present as rows on the Release Notes page — nothing to sync.
+
+===== 2026-07-23 16:34:07 =====
+Permission allow rule (.claude\settings.json): Write(**) is not matched by file permission checks — only Edit(path) rules are. Use Edit(**) instead (Edit rules cover all file-editing tools).
+Added TC-15 (2026-07-23, Astha Jain, 11m) to the Release Notes page as the top row — all other Done tickets were already present.
+
