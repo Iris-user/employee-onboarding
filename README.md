@@ -126,6 +126,11 @@ Returns a list of all departments.
 
 Returns a department's details by ID. Returns `404 Not Found` if the ID doesn't exist.
 
+### Get Department List (POST)
+`POST /departments/list`
+
+Returns a list of all departments. Equivalent to [Get All Departments](#get-all-departments), exposed as a POST endpoint for clients that require a POST-based list request.
+
 ## API Documentation
 
 Swagger UI: `http://localhost:8080/swagger-ui/index.html`
