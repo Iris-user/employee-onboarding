@@ -3,6 +3,15 @@
 # headlessly, invoked on a schedule by the scheduler
 # (task name: EmployeeOnboarding-SyncReleaseNotes). See scheduled-tasks.json
 # in this directory for the job definition this script implements.
+
+# Task Scheduler launches bash.exe directly by absolute path, so the
+# environment it inherits does NOT include Git's own usr/bin (dirname, sed,
+# ls, uname, which, ...) the way an interactive Git Bash shell does, nor the
+# node/npm global bin dirs. This must be set before ANY external command
+# runs below — including dirname a few lines down, and the coreutils the
+# `claude` npm shim itself calls internally to resolve its own install path.
+export PATH="/c/Users/astha.jain/AppData/Local/Programs/Git/usr/bin:/c/Users/astha.jain/AppData/Local/Programs/Git/bin:/c/Program Files/nodejs:/c/Users/astha.jain/AppData/Roaming/npm:$PATH"
+
 set -uo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -13,12 +22,6 @@ LOG_FILE="$SCRIPT_DIR/logs/sync-release-notes.log"
 {
   echo "===== $(date '+%Y-%m-%d %H:%M:%S') ====="
   set -e
-
-  # Task Scheduler launches bash.exe non-interactively/non-login, so
-  # ~/.bashrc / Git's /etc/profile are never sourced and PATH additions made
-  # there (node, npm global bin) may be missing. Make PATH self-contained
-  # here instead of relying on the invoking shell's environment.
-  export PATH="/c/Program Files/nodejs:/c/Users/astha.jain/AppData/Roaming/npm:$PATH"
 
   PROJECT_DIR="/d/ClaudeCodePOC/employee-onboarding"
   PROMPT_FILE="$SCRIPT_DIR/sync-release-notes-prompt.txt"
