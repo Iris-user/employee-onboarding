@@ -1,5 +1,6 @@
 package com.example.employeeonboarding.repository;
 
+import com.example.employeeonboarding.model.Department;
 import com.example.employeeonboarding.model.Employee;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,31 +16,41 @@ class EmployeeRepositoryTest {
     @Autowired
     private EmployeeRepository repository;
 
-    @Test
-    void findByDepartment_returnsOnlyEmployeesInThatDepartment() {
-        repository.save(new Employee(null, "Alice", "Smith", "alice@example.com", "Engineering", 27));
-        repository.save(new Employee(null, "Bob", "Jones", "bob@example.com", "Sales", 30));
-        repository.save(new Employee(null, "Carol", "White", "carol@example.com", "Engineering", 35));
+    @Autowired
+    private DepartmentRepository departmentRepository;
 
-        List<Employee> result = repository.findByDepartment("Engineering");
+    @Test
+    void findByDepartmentName_returnsOnlyEmployeesInThatDepartment() {
+        Department engineering = departmentRepository.save(new Department(null, "Engineering"));
+        Department sales = departmentRepository.save(new Department(null, "Sales"));
+
+        repository.save(new Employee(null, "Alice", "Smith", "alice@example.com", engineering, 27));
+        repository.save(new Employee(null, "Bob", "Jones", "bob@example.com", sales, 30));
+        repository.save(new Employee(null, "Carol", "White", "carol@example.com", engineering, 35));
+
+        List<Employee> result = repository.findByDepartmentName("Engineering");
 
         assertThat(result).extracting(Employee::getName).containsExactlyInAnyOrder("Alice", "Carol");
     }
 
     @Test
-    void findByDepartment_returnsEmptyListWhenNoEmployeesMatch() {
-        repository.save(new Employee(null, "Alice", "Smith", "alice@example.com", "Engineering", 27));
+    void findByDepartmentName_returnsEmptyListWhenNoEmployeesMatch() {
+        Department engineering = departmentRepository.save(new Department(null, "Engineering"));
+        repository.save(new Employee(null, "Alice", "Smith", "alice@example.com", engineering, 27));
 
-        List<Employee> result = repository.findByDepartment("Marketing");
+        List<Employee> result = repository.findByDepartmentName("Marketing");
 
         assertThat(result).isEmpty();
     }
 
     @Test
     void findByAge_returnsOnlyEmployeesWithThatAge() {
-        repository.save(new Employee(null, "Alice", "Smith", "alice@example.com", "Engineering", 30));
-        repository.save(new Employee(null, "Bob", "Jones", "bob@example.com", "Sales", 40));
-        repository.save(new Employee(null, "Carol", "White", "carol@example.com", "Engineering", 30));
+        Department engineering = departmentRepository.save(new Department(null, "Engineering"));
+        Department sales = departmentRepository.save(new Department(null, "Sales"));
+
+        repository.save(new Employee(null, "Alice", "Smith", "alice@example.com", engineering, 30));
+        repository.save(new Employee(null, "Bob", "Jones", "bob@example.com", sales, 40));
+        repository.save(new Employee(null, "Carol", "White", "carol@example.com", engineering, 30));
 
         List<Employee> result = repository.findByAge(30);
 
@@ -48,7 +59,8 @@ class EmployeeRepositoryTest {
 
     @Test
     void findByAge_returnsEmptyListWhenNoEmployeesMatch() {
-        repository.save(new Employee(null, "Alice", "Smith", "alice@example.com", "Engineering", 30));
+        Department engineering = departmentRepository.save(new Department(null, "Engineering"));
+        repository.save(new Employee(null, "Alice", "Smith", "alice@example.com", engineering, 30));
 
         List<Employee> result = repository.findByAge(99);
 
@@ -57,8 +69,11 @@ class EmployeeRepositoryTest {
 
     @Test
     void findByEmail_returnsOnlyEmployeesWithThatEmail() {
-        repository.save(new Employee(null, "Alice", "Smith", "alice@example.com", "Engineering", 30));
-        repository.save(new Employee(null, "Bob", "Jones", "bob@example.com", "Sales", 40));
+        Department engineering = departmentRepository.save(new Department(null, "Engineering"));
+        Department sales = departmentRepository.save(new Department(null, "Sales"));
+
+        repository.save(new Employee(null, "Alice", "Smith", "alice@example.com", engineering, 30));
+        repository.save(new Employee(null, "Bob", "Jones", "bob@example.com", sales, 40));
 
         List<Employee> result = repository.findByEmail("alice@example.com");
 
@@ -67,7 +82,8 @@ class EmployeeRepositoryTest {
 
     @Test
     void findByEmail_returnsEmptyListWhenNoEmployeesMatch() {
-        repository.save(new Employee(null, "Alice", "Smith", "alice@example.com", "Engineering", 30));
+        Department engineering = departmentRepository.save(new Department(null, "Engineering"));
+        repository.save(new Employee(null, "Alice", "Smith", "alice@example.com", engineering, 30));
 
         List<Employee> result = repository.findByEmail("nobody@example.com");
 

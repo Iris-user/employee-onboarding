@@ -1,6 +1,8 @@
 package com.example.employeeonboarding;
 
+import com.example.employeeonboarding.model.Department;
 import com.example.employeeonboarding.model.Employee;
+import com.example.employeeonboarding.repository.DepartmentRepository;
 import com.example.employeeonboarding.repository.EmployeeRepository;
 import com.example.employeeonboarding.service.EmployeeService;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,16 +31,22 @@ class EmployeeIntegrationTest {
     @Autowired
     private EmployeeRepository employeeRepository;
 
+    @Autowired
+    private DepartmentRepository departmentRepository;
+
     @BeforeEach
     void setUp() {
         employeeRepository.deleteAll();
+        departmentRepository.deleteAll();
     }
 
     @Test
     void shouldCreateAndRetrieveEmployeeWithLastName() throws Exception {
+        Department hr = departmentRepository.save(new Department(null, "HR"));
+
         mockMvc.perform(post("/employees")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"Alice\",\"lastName\":\"Johnson\",\"email\":\"alice@example.com\",\"department\":\"HR\",\"age\":28}"))
+                        .content("{\"name\":\"Alice\",\"lastName\":\"Johnson\",\"email\":\"alice@example.com\",\"department\":{\"id\":" + hr.getId() + "},\"age\":28}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Alice"))
                 .andExpect(jsonPath("$.lastName").value("Johnson"));
@@ -56,7 +64,8 @@ class EmployeeIntegrationTest {
 
     @Test
     void shouldGetAllEmployees() throws Exception {
-        employeeService.save(new Employee(null, "Bob", "Brown", "bob@example.com", "Finance", 30));
+        Department finance = departmentRepository.save(new Department(null, "Finance"));
+        employeeService.save(new Employee(null, "Bob", "Brown", "bob@example.com", finance, 30));
 
         mockMvc.perform(get("/employees"))
                 .andExpect(status().isOk())
@@ -65,7 +74,8 @@ class EmployeeIntegrationTest {
 
     @Test
     void shouldUpdateLastNameViaEndpoint() throws Exception {
-        Employee saved = employeeService.save(new Employee(null, "Carol", "White", "carol@example.com", "IT", 30));
+        Department it = departmentRepository.save(new Department(null, "IT"));
+        Employee saved = employeeService.save(new Employee(null, "Carol", "White", "carol@example.com", it, 30));
 
         mockMvc.perform(patch("/employees/" + saved.getId() + "/last-name")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -76,7 +86,8 @@ class EmployeeIntegrationTest {
 
     @Test
     void shouldUpdateLastNameViaService() {
-        Employee saved = employeeService.save(new Employee(null, "Dan", "Green", "dan@example.com", "Legal", 30));
+        Department legal = departmentRepository.save(new Department(null, "Legal"));
+        Employee saved = employeeService.save(new Employee(null, "Dan", "Green", "dan@example.com", legal, 30));
 
         Employee updated = employeeService.updateLastName(saved.getId(), "Grey");
 
@@ -90,7 +101,8 @@ class EmployeeIntegrationTest {
 
     @Test
     void shouldDeleteEmployeeViaEndpoint() throws Exception {
-        Employee saved = employeeService.save(new Employee(null, "Eve", "Black", "eve@example.com", "Support", 30));
+        Department support = departmentRepository.save(new Department(null, "Support"));
+        Employee saved = employeeService.save(new Employee(null, "Eve", "Black", "eve@example.com", support, 30));
 
         mockMvc.perform(delete("/employees/" + saved.getId()))
                 .andExpect(status().isNoContent());
@@ -106,8 +118,10 @@ class EmployeeIntegrationTest {
 
     @Test
     void shouldDeleteMultipleEmployeesViaEndpoint() throws Exception {
-        Employee first = employeeService.save(new Employee(null, "Frank", "Miller", "frank@example.com", "Sales", 40));
-        Employee second = employeeService.save(new Employee(null, "Grace", "Hopper", "grace@example.com", "Engineering", 45));
+        Department sales = departmentRepository.save(new Department(null, "Sales"));
+        Department engineering = departmentRepository.save(new Department(null, "Engineering"));
+        Employee first = employeeService.save(new Employee(null, "Frank", "Miller", "frank@example.com", sales, 40));
+        Employee second = employeeService.save(new Employee(null, "Grace", "Hopper", "grace@example.com", engineering, 45));
 
         mockMvc.perform(delete("/employees")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -120,7 +134,8 @@ class EmployeeIntegrationTest {
 
     @Test
     void shouldReturnNotFoundWhenDeletingMultipleEmployeesWithUnknownId() throws Exception {
-        Employee saved = employeeService.save(new Employee(null, "Henry", "Ford", "henry@example.com", "Engineering", 50));
+        Department engineering = departmentRepository.save(new Department(null, "Engineering"));
+        Employee saved = employeeService.save(new Employee(null, "Henry", "Ford", "henry@example.com", engineering, 50));
 
         mockMvc.perform(delete("/employees")
                         .contentType(MediaType.APPLICATION_JSON)
