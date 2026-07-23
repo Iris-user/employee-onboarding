@@ -3,8 +3,8 @@
     {
       "id": "sync-release-notes",
       "description": "Check the TC board for Jira tickets newly moved to Done and log them to the Release Notes Confluence page",
-      "schedule": "every 5 minutes",
-      "cron": "*/5 * * * *",
+      "schedule": "every 15 minutes",
+      "cron": "*/15 * * * *",
       "windowsTaskName": "EmployeeOnboarding-SyncReleaseNotes",
       "workingDirectory": "D:\\ClaudeCodePOC\\employee-onboarding",
       "jql": "project = TC AND status = Done",
