@@ -1,0 +1,12 @@
+Check for any TC-board Jira tickets that have moved to status "Done" and are not yet logged on the "Release Notes" Confluence page (page id 9207809), and add them.
+
+Steps:
+1. Use the Atlassian MCP server (jira_search, jql: project = TC AND status = Done) to find all issues in the TC project with status = Done. Paginate through all pages using page_token if a next_page_token is returned.
+2. Fetch the current content of Confluence page id 9207809 (confluence_get_page).
+3. Compare against the JIRA IDs already listed as rows in that page's table — determine which Done tickets are NOT yet present.
+4. For each missing Done ticket, gather: JIRA ID, Date (use the Done transition date from the changelog if available, else today), Description (a concise summary of what was actually implemented, not just the raw Jira title — match the style of existing rows), Implemented By (assignee display name, falling back to reporter if unassigned), and Time Spent (look for a worklog entry on the issue whose comment indicates it covers the To Do -> In Review span, per the project's worklog convention; if none exists or is applicable, use "-").
+5. Insert a new row for each missing ticket at the TOP of the existing table (most recent first -- if multiple tickets are missing, order them among themselves by Date, most recent first), and update the Confluence page (confluence_update_page, content_format: markdown) preserving all existing rows below and the page's existing intro paragraph text unchanged.
+6. If there are no Done tickets missing from the page, do nothing (don't create a no-op edit).
+7. Report a one-line summary of what was added (or "nothing to sync") -- this runs unattended, so keep any output minimal.
+
+Do not create a separate detail page per ticket. Do not touch tickets that are not in status Done. Do not duplicate rows for tickets already listed. Do not modify the page's intro paragraph.
