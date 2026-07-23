@@ -73,4 +73,15 @@ class DepartmentControllerTest {
         mockMvc.perform(get("/departments/{id}", 99L))
                 .andExpect(status().isNotFound());
     }
+
+    @Test
+    void shouldGetDepartmentListViaPost() throws Exception {
+        Department department = new Department(1L, "Engineering");
+        when(service.getAll()).thenReturn(List.of(department));
+
+        mockMvc.perform(post("/departments/list")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].name").value("Engineering"));
+    }
 }

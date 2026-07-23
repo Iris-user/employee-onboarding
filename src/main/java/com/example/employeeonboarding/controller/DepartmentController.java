@@ -27,6 +27,11 @@ public class DepartmentController {
         return service.getAll();
     }
 
+    @PostMapping("/list")
+    public List<Department> getDepartmentList() {
+        return service.getAll();
+    }
+
     @GetMapping("/{id}")
     public Department getDepartmentById(@PathVariable Long id) {
         return service.getById(id);
