@@ -5,7 +5,9 @@ import com.example.employeeonboarding.service.DepartmentService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/departments")
@@ -35,5 +37,10 @@ public class DepartmentController {
     @GetMapping("/{id}")
     public Department getDepartmentById(@PathVariable Long id) {
         return service.getById(id);
+    }
+
+    @GetMapping("/{id}/employees/count")
+    public Map<String, Long> getEmployeeCount(@PathVariable Long id) {
+        return Collections.singletonMap("employeeCount", service.getEmployeeCount(id));
     }
 }

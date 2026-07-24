@@ -84,4 +84,21 @@ class DepartmentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].name").value("Engineering"));
     }
+
+    @Test
+    void getEmployeeCount_returnsCountWhenDepartmentExists() throws Exception {
+        when(service.getEmployeeCount(1L)).thenReturn(5L);
+
+        mockMvc.perform(get("/departments/{id}/employees/count", 1L))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.employeeCount").value(5));
+    }
+
+    @Test
+    void getEmployeeCount_returnsNotFound_whenDepartmentDoesNotExist() throws Exception {
+        when(service.getEmployeeCount(99L)).thenThrow(new DepartmentNotFoundException("Department not found with id: 99"));
+
+        mockMvc.perform(get("/departments/{id}/employees/count", 99L))
+                .andExpect(status().isNotFound());
+    }
 }
