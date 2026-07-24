@@ -43,7 +43,7 @@ When given a Jira ID (e.g. PROJ-123), follow these steps:
 5. Follow TDD - Write failing Test Case using JUNIT 5, add imports to pom.xml if needed
 6. run tests and ensure they are executing but failing
 7. Implement the changes described in the ticket
-8. Run SonarQube scan — fix any issues including code smells
+8. Run SonarQube scan
 9. Commit with message: `PROJ-123: <ticket summary>`
 10. Push branch to GitHub
 11. Raise a Pull Request with the Jira ticket summary as the PR description

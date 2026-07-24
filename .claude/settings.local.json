@@ -144,7 +144,17 @@
       "Bash(powershell -NoProfile -Command \"\\(Get-Item 'profiles.json'\\).LastWriteTime\")",
       "Bash(powershell -NoProfile -Command \"Get-CimInstance Win32_Process -Filter \\\\\"Name='docker.exe'\\\\\" | Select-Object ProcessId, CommandLine | Format-List\")",
       "Bash(powershell -NoProfile -Command \"Stop-Process -Id 31760 -Force\")",
-      "Bash(echo \"kill attempted, exit:$?\")"
+      "Bash(echo \"kill attempted, exit:$?\")",
+      "Bash(tee /tmp/out.log)",
+      "Bash(echo \"EXIT_CODE:$?\")",
+      "Read(//tmp/**)",
+      "mcp__MCP_DOCKER__atlassian__jira_add_worklog",
+      "mcp__MCP_DOCKER__github-official__list_pull_requests",
+      "mcp__MCP_DOCKER__github-official__pull_request_read",
+      "Bash(schtasks *)",
+      "Bash(bash D:/ClaudeCodePOC/employee-onboarding/.claude/automation/sync-release-notes.sh)",
+      "Bash(bash -c 'cd \"D:\\\\ClaudeCodePOC\\\\employee-onboarding\\\\.claude\\\\automation\" && pwd')",
+      "Bash(break)"
     ]
   },
   "enabledMcpjsonServers": [
