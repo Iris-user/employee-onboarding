@@ -3,6 +3,7 @@ package com.example.employeeonboarding.service;
 import com.example.employeeonboarding.exception.DepartmentNotFoundException;
 import com.example.employeeonboarding.model.Department;
 import com.example.employeeonboarding.repository.DepartmentRepository;
+import com.example.employeeonboarding.repository.EmployeeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,13 +24,16 @@ class DepartmentServiceTest {
     @Mock
     private DepartmentRepository repository;
 
+    @Mock
+    private EmployeeRepository employeeRepository;
+
     private DepartmentService service;
 
     private Department department;
 
     @BeforeEach
     void setUp() {
-        service = new DepartmentService(repository);
+        service = new DepartmentService(repository, employeeRepository);
         department = new Department(1L, "Engineering");
     }
 
@@ -65,6 +69,24 @@ class DepartmentServiceTest {
         when(repository.findById(99L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.getById(99L))
+                .isInstanceOf(DepartmentNotFoundException.class);
+    }
+
+    @Test
+    void getEmployeeCount_returnsCountFromRepository_whenDepartmentExists() {
+        when(repository.findById(1L)).thenReturn(Optional.of(department));
+        when(employeeRepository.countByDepartmentId(1L)).thenReturn(3L);
+
+        long count = service.getEmployeeCount(1L);
+
+        assertThat(count).isEqualTo(3L);
+    }
+
+    @Test
+    void getEmployeeCount_throwsDepartmentNotFoundException_whenIdDoesNotExist() {
+        when(repository.findById(99L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> service.getEmployeeCount(99L))
                 .isInstanceOf(DepartmentNotFoundException.class);
     }
 }

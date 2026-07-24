@@ -20,4 +20,6 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
     @EntityGraph(attributePaths = "department")
     List<Employee> findByEmail(String email);
+
+    long countByDepartmentId(Long departmentId);
 }

@@ -89,4 +89,27 @@ class EmployeeRepositoryTest {
 
         assertThat(result).isEmpty();
     }
+
+    @Test
+    void countByDepartmentId_returnsNumberOfEmployeesInThatDepartment() {
+        Department engineering = departmentRepository.save(new Department(null, "Engineering"));
+        Department sales = departmentRepository.save(new Department(null, "Sales"));
+
+        repository.save(new Employee(null, "Alice", "Smith", "alice@example.com", engineering, 27, null, null, null));
+        repository.save(new Employee(null, "Bob", "Jones", "bob@example.com", sales, 30, null, null, null));
+        repository.save(new Employee(null, "Carol", "White", "carol@example.com", engineering, 35, null, null, null));
+
+        long count = repository.countByDepartmentId(engineering.getId());
+
+        assertThat(count).isEqualTo(2);
+    }
+
+    @Test
+    void countByDepartmentId_returnsZeroWhenNoEmployeesInDepartment() {
+        Department engineering = departmentRepository.save(new Department(null, "Engineering"));
+
+        long count = repository.countByDepartmentId(engineering.getId());
+
+        assertThat(count).isZero();
+    }
 }
