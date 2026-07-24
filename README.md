@@ -131,6 +131,18 @@ Returns a department's details by ID. Returns `404 Not Found` if the ID doesn't 
 
 Returns a list of all departments. Equivalent to [Get All Departments](#get-all-departments), exposed as a POST endpoint for clients that require a POST-based list request.
 
+### Get Employee Count By Department
+`GET /departments/{id}/employees/count`
+
+Returns the total number of employees in a department. Returns `404 Not Found` if the department `id` doesn't exist.
+
+**Response Body:**
+```json
+{
+  "employeeCount": 5
+}
+```
+
 ## API Documentation
 
 Swagger UI: `http://localhost:8080/swagger-ui/index.html`
